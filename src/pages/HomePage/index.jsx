@@ -1,7 +1,18 @@
+import ProductCard from "../../components/productCard";
+
 function HomePage() {
   return (
     <>
-      <h1>HomePage</h1>
+      <section className="flex flex-wrap justify-center gap-3">
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard />
+      </section>
     </>
   );
 }
