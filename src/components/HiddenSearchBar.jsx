@@ -1,7 +1,7 @@
 export default function HiddenSearchBar() {
   return (
     <>
-      <div className="w-full max-w-md md:hidden mb-10">
+      <div className="w-full max-w-md md:hidden">
         <form
           action="/search"
           method="GET"
