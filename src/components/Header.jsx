@@ -1,14 +1,23 @@
-import HiddenSearchBar from "../hiddenSearchBar";
-import SearchBar from "../SearchBar";
+import { useState } from "react";
+import HiddenSearchBar from "./hiddenSearchBar";
+import SearchBar from "./SearchBar";
+import { useDispatch } from "react-redux";
+import { toggleSidebar } from "../redux/uiSlice";
 
 function Header() {
+  const dispatch = useDispatch();
+
+  const handleToggle = () => {
+    dispatch(toggleSidebar());
+  };
+
   return (
     <>
-      <header className="bg-brand-dark p-5 border-b border-brand-sand/20 sticky z-50 top-0 shadow-md mb-4">
+      <header className="bg-brand-dark p-5 border-b border-brand-sand/20 sticky z-50 top-0 shadow-md">
         <div className="mx-auto px-4 flex justify-between items-center">
           <div className="flex gap-3">
-            <button>
-              <i class="fa-solid fa-bars text-brand-light text-[27px]"></i>
+            <button className="md:hidden" onClick={handleToggle}>
+              <i className="fa-solid fa-bars text-brand-light text-[27px]"></i>
             </button>
 
             <a
@@ -22,10 +31,10 @@ function Header() {
           <SearchBar />
 
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <button class="relative p-2 text-brand-sand hover:text-brand-rust transition-colors duration-200">
-              <span class="absolute top-1 right-1 w-2 h-2 bg-brand-rust rounded-full"></span>
+            <button className="relative p-2 text-brand-sand hover:text-brand-rust transition-colors duration-200">
+              <span className="absolute top-1 right-1 w-2 h-2 bg-brand-rust rounded-full"></span>
               <svg
-                class="w-6 h-6"
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"

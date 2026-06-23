@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import HomePage from "./pages/HomePage";
-import SearchPage from "./pages/SearchPage";
-import Header from "./components/Header";
-import NotFound from "./pages/NotFound";
 import RootLayout from "./layouts/rootLayout";
+import HomePage from "./pages/HomePage";
+import NotFound from "./pages/NotFound";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import SearchPage from "./pages/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <SearchPage />,
+      },
+      {
+        path: "detail",
+        element: <ProductDetailPage />,
       },
     ],
   },
