@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import HiddenSearchBar from "./hiddenSearchBar";
 import SearchBar from "./SearchBar";
 import { useDispatch } from "react-redux";
@@ -6,16 +6,33 @@ import { toggleSidebar } from "../redux/uiSlice";
 
 function Header() {
   const dispatch = useDispatch();
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const handleToggle = () => {
     dispatch(toggleSidebar());
   };
 
+  const categories = [
+    { name: "All Products", href: "/shop" },
+    { name: "Audio Systems", href: "/shop/audio" },
+    { name: "Studio Monitors", href: "/shop/monitors" },
+    { name: "Headphones", href: "/shop/headphones" },
+    { name: "Cables & Accessories", href: "/shop/accessories" },
+  ];
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   return (
     <>
       <header className="bg-brand-dark p-5 border-b border-brand-sand/20 sticky z-50 top-0 shadow-md">
         <div className="mx-auto px-4 flex justify-between items-center">
-          <div className="flex gap-3">
+          <div className="flex gap-6 items-baseline">
             <button className="md:hidden" onClick={handleToggle}>
               <i className="fa-solid fa-bars text-brand-light text-[27px]"></i>
             </button>
@@ -26,6 +43,35 @@ function Header() {
             >
               HOANGAN<span className="text-brand-rust">.</span>
             </a>
+
+            {/* dropdown menu */}
+            <div className="hidden md:block relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 text-sm font-semibold text-brand-light hover:text-brand-rust transition-colors duration-200 focus:outline-none cursor-pointer"
+              >
+                <span>Categories</span>
+                <i
+                  className={`fa-solid fa-chevron-down text-xs transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                ></i>
+              </button>
+
+              {/* THE ACTUAL DROPDOWN FLOATING CARD */}
+              {dropdownOpen && (
+                <div className="absolute left-0 mt-4 w-56 bg-brand-dark border border-brand-sand/20 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {categories.map((cat, idx) => (
+                    <a
+                      key={idx}
+                      href={cat.href}
+                      className="flex items-center px-4 py-2.5 text-sm font-medium text-brand-slate hover:bg-white/5 hover:text-white transition-colors"
+                      onClick={() => setDropdownOpen(false)} // Close menu when an option is clicked
+                    >
+                      {cat.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <SearchBar />

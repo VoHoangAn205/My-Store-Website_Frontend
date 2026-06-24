@@ -1,9 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar } from "../redux/uiSlice";
+import { useState } from "react";
 
 export default function SideBar() {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.UI.sidebarStatus);
+  const [activeTab, setActiveTab] = useState("cart");
+  const tabs = [
+    { id: "cart", label: "Shopping Cart", icon: "fa-shopping-cart" },
+    { id: "pending", label: "Pending Orders", icon: "fa-clock", count: 2 },
+    { id: "history", label: "Order History", icon: "fa-history" },
+    { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
+  ];
 
   const handleCloseSidebar = () => {
     dispatch(closeSidebar());
@@ -22,7 +30,7 @@ export default function SideBar() {
         className={`
           bg-brand-dark text-white border-brand-sand/10
           fixed inset-y-0 left-0 w-64 h-full z-50 top-20
-          transform transition-transform duration-300 ease-in-out
+          transform transition-transform duration-300 ease-in-out p-4
           
           
           md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:pt-0 md:border-r md:z-30 
@@ -32,20 +40,55 @@ export default function SideBar() {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        <nav className="flex flex-col p-4 gap-1">
-          <a
-            href="#"
-            className="flex items-center px-4 py-3 text-sm font-semibold rounded-xl bg-brand-rust text-white"
-          >
-            Dashboard
-          </a>
-          <a
-            href="#"
-            className="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-brand-slate hover:bg-white/5 hover:text-white transition-colors"
-          >
-            Products
-          </a>
+        <div className="w-full bg-brand-dark px-2 mt-3">
+          <div className="flex items-center gap-3 pb-6  border-b border-brand-sand/40">
+            <i className="fa-solid fa-circle-user text-brand-light text-4xl"></i>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-brand-light">David</span>
+              <span className="text-xs text-brand-slate">Premium Member</span>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex flex-col gap-1 overflow-x-auto md:overflow-x-visible scrollbar-none">
+          {tabs.map((tab) => {
+            const isSelected = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-150 whitespace-nowrap w-full text-left
+                    ${
+                      isSelected
+                        ? "bg-brand-dark text-white shadow-sm"
+                        : "text-brand-slate hover:bg-brand-light hover:text-brand-dark"
+                    }`}
+              >
+                <div className="flex items-center gap-3">
+                  <i className={`fa-solid ${tab.icon} text-base`}></i>
+                  <span>{tab.label}</span>
+                </div>
+
+                {/* Alert notification bubble pill badge context layout */}
+                {tab.count && (
+                  <span
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full 
+                      ${isSelected ? "bg-brand-rust text-white" : "bg-brand-rust/10 text-brand-rust"}`}
+                  >
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </nav>
+
+        <div className="block border-t border-brand-sand/40">
+          <button className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-brand-slate hover:text-brand-rust rounded-xl transition-colors">
+            <i className="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Log Out Account</span>
+          </button>
+        </div>
       </aside>
     </>
   );
