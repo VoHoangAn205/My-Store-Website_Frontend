@@ -1,22 +1,79 @@
 import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar } from "../redux/uiSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function SideBar() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userInfo = { name: "abc", role: ["user", "ad", "salesman"] };
   const isOpen = useSelector((state) => state.UI.sidebarStatus);
   const [activeTab, setActiveTab] = useState("cart");
-  const tabs = [
+  const [tabs, setTabs] = useState([
     { id: "cart", label: "Shopping Cart", icon: "fa-shopping-cart" },
     { id: "pending", label: "Pending Orders", icon: "fa-clock", count: 2 },
     { id: "history", label: "Order History", icon: "fa-history" },
     { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
+  ]);
+
+  const dashboard = [
+    {
+      id: "createProduct",
+      label: "Create Product",
+      icon: "fa-solid fa-shapes",
+    },
   ];
 
   const handleCloseSidebar = () => {
     dispatch(closeSidebar());
   };
 
+  const handleNavigate = (id) => {
+    setActiveTab(id);
+    navigate(`/${id}`);
+  };
+
+  const RenderTabs = () => {
+    return tabs.map((tab) => {
+      const isSelected = activeTab === tab.id;
+      return (
+        <button
+          key={tab.id}
+          onClick={() => handleNavigate(tab.id)}
+          className={`flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-150 whitespace-nowrap w-full text-left
+                    ${
+                      isSelected
+                        ? "bg-brand-dark text-white shadow-sm"
+                        : "text-brand-slate hover:bg-brand-light hover:text-brand-dark"
+                    }`}
+        >
+          <div className="flex items-center gap-3">
+            <i className={`fa-solid ${tab.icon} text-base`}></i>
+            <span>{tab.label}</span>
+          </div>
+
+          {tab.count && (
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full 
+                      ${isSelected ? "bg-brand-rust text-white" : "bg-brand-rust/10 text-brand-rust"}`}
+            >
+              {tab.count}
+            </span>
+          )}
+        </button>
+      );
+    });
+  };
+
+  useEffect(() => {
+    const isSalesman = userInfo?.role?.includes("salesman");
+
+    if (isSalesman) {
+      setTabs([...tabs, ...dashboard]);
+    } else {
+      setTabs(defaultTabs);
+    }
+  }, []);
   return (
     <>
       {isOpen && (
@@ -51,36 +108,7 @@ export default function SideBar() {
         </div>
 
         <nav className="flex flex-col gap-1 overflow-x-auto md:overflow-x-visible scrollbar-none">
-          {tabs.map((tab) => {
-            const isSelected = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-150 whitespace-nowrap w-full text-left
-                    ${
-                      isSelected
-                        ? "bg-brand-dark text-white shadow-sm"
-                        : "text-brand-slate hover:bg-brand-light hover:text-brand-dark"
-                    }`}
-              >
-                <div className="flex items-center gap-3">
-                  <i className={`fa-solid ${tab.icon} text-base`}></i>
-                  <span>{tab.label}</span>
-                </div>
-
-                {/* Alert notification bubble pill badge context layout */}
-                {tab.count && (
-                  <span
-                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full 
-                      ${isSelected ? "bg-brand-rust text-white" : "bg-brand-rust/10 text-brand-rust"}`}
-                  >
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          <RenderTabs />
         </nav>
 
         <div className="block border-t border-brand-sand/40">

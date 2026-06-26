@@ -8,9 +8,9 @@ export default function RootLayout() {
     <>
       <div className="min-h-screen bg-brand-light flex flex-col">
         <Header />
-        <div className="flex flex-grow relative">
+        <div className="flex grow relative">
           <SideBar />
-          <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-4">
+          <main className="grow max-w-7xl w-full mx-auto px-4 py-4">
             <Outlet />
           </main>
         </div>
