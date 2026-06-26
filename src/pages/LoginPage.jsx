@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/userSlice";
+import { useNavigate } from "react-router";
 
 function LoginPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [errMessage, setErrMessage] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,8 +24,15 @@ function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Logging in user payload:", formData);
-    // This is where you connect your backend API or dispatch a login Redux thunk!
+    dispatch(login(formData)).then((data) => {
+      const { status, message } = data.payload;
+      if (status) {
+        setErrMessage("");
+        navigate("/");
+      } else {
+        setErrMessage(message);
+      }
+    });
   };
 
   return (
@@ -71,7 +84,7 @@ function LoginPage() {
             <p className="text-sm text-brand-slate mt-1">
               New to our network?{" "}
               <a
-                href="/register"
+                onClick={() => navigate("/register")}
                 className="text-brand-rust font-semibold hover:underline"
               >
                 Create an account
@@ -179,6 +192,10 @@ function LoginPage() {
               </div>
             </div>
 
+            <div>
+              <p className="text-brand-rust">{errMessage}</p>
+            </div>
+
             {/* Remember Me Box Control */}
             {/* <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-2">
@@ -204,7 +221,7 @@ function LoginPage() {
               type="submit"
               className="w-full mt-4 bg-brand-dark text-white font-bold text-sm py-3 rounded-xl shadow-md hover:bg-brand-rust hover:shadow-lg transition-all duration-200 focus:outline-none cursor-pointer"
             >
-              Sign Into Dashboard
+              Sign In
             </button>
           </form>
         </div>
