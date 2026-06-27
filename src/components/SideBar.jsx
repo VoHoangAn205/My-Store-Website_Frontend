@@ -11,7 +11,7 @@ export default function SideBar() {
   const [activeTab, setActiveTab] = useState("cart");
   const [tabs, setTabs] = useState([
     { id: "cart", label: "Shopping Cart", icon: "fa-shopping-cart" },
-    { id: "pending", label: "Pending Orders", icon: "fa-clock", count: 2 },
+    { id: "myPurchases", label: "My Purchases", icon: "fa-clock", count: 2 },
     { id: "history", label: "Order History", icon: "fa-history" },
     { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
   ]);
@@ -65,15 +65,6 @@ export default function SideBar() {
     });
   };
 
-  useEffect(() => {
-    const isSalesman = userInfo?.role?.includes("salesman");
-
-    if (isSalesman) {
-      setTabs([...tabs, ...dashboard]);
-    } else {
-      setTabs(defaultTabs);
-    }
-  }, []);
   return (
     <>
       {isOpen && (

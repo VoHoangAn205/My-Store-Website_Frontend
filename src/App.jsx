@@ -8,6 +8,7 @@ import UserProfileDashboard from "./pages/UserProfileDashboard";
 import CreateProduct from "./pages/dashboard/CreateProduct";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import MyPurchases from "./pages/dashboard/MyPurchases";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "createProduct",
         element: <CreateProduct />,
+      },
+      {
+        path: "myPurchases",
+        element: <MyPurchases />,
       },
     ],
   },

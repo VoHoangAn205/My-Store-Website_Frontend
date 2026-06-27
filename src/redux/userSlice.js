@@ -16,6 +16,18 @@ export const register = createAsyncThunk(
   },
 );
 
+export const refreshToken = createAsyncThunk(
+  "user/refreshToken",
+  async (data, thunkAPI) => {
+    try {
+      const response = await userService.refreshToken();
+      return { status: true, data: response.data };
+    } catch (err) {
+      return { status: false, message: err.response.data.message };
+    }
+  },
+);
+
 export const login = createAsyncThunk("user/login", async (data, thunkAPI) => {
   try {
     const response = await userService.login(data);
@@ -31,6 +43,10 @@ export const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.token = action.payload.data.accessToken;
+    });
+    builder.addCase(refreshToken.fulfilled, (state, action) => {
       console.log(action.payload);
       state.token = action.payload.data.accessToken;
     });

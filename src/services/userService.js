@@ -7,6 +7,9 @@ const userService = {
   login(data) {
     return API.call().post("/auth", data);
   },
+  refreshToken() {
+    return API.call().get("/refresh");
+  },
 };
 
 export default userService;
