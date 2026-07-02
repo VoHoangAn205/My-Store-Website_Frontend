@@ -7,8 +7,11 @@ const userService = {
   login(data) {
     return API.call().post("/auth", data);
   },
+  logout() {
+    return API.call().post("/logout");
+  },
   refreshToken() {
-    return API.call().get("/refresh");
+    return API.call().post("/refresh");
   },
 };
 

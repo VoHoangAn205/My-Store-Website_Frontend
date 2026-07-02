@@ -3,9 +3,11 @@ import HiddenSearchBar from "./hiddenSearchBar";
 import SearchBar from "./SearchBar";
 import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../redux/uiSlice";
+import { useNavigate } from "react-router";
 
 function Header() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const handleToggle = () => {
@@ -38,7 +40,9 @@ function Header() {
             </button>
 
             <a
-              href="#"
+              onClick={() => {
+                navigate("/");
+              }}
               className="text-xl font-black tracking-widest text-brand-light hover:text-brand-rust transition-colors duration-200"
             >
               HOANGAN<span className="text-brand-rust">.</span>

@@ -2,11 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar } from "../redux/uiSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { logout } from "../redux/userSlice";
 
 export default function SideBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userInfo = { name: "abc", role: ["user", "ad", "salesman"] };
+  const userProfile = useSelector((state) => state.USER.userProfile);
   const isOpen = useSelector((state) => state.UI.sidebarStatus);
   const [activeTab, setActiveTab] = useState("cart");
   const [tabs, setTabs] = useState([
@@ -15,6 +16,7 @@ export default function SideBar() {
     { id: "history", label: "Order History", icon: "fa-history" },
     { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
   ]);
+  console.log(userProfile);
 
   const dashboard = [
     {
@@ -26,6 +28,11 @@ export default function SideBar() {
 
   const handleCloseSidebar = () => {
     dispatch(closeSidebar());
+  };
+
+  const handleLogout = () => {
+    navigate("/");
+    dispatch(logout());
   };
 
   const handleNavigate = (id) => {
@@ -103,7 +110,10 @@ export default function SideBar() {
         </nav>
 
         <div className="block border-t border-brand-sand/40">
-          <button className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-brand-slate hover:text-brand-rust rounded-xl transition-colors">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-brand-slate hover:text-brand-rust rounded-xl transition-colors"
+          >
             <i className="fa-solid fa-arrow-right-from-bracket"></i>
             <span>Log Out Account</span>
           </button>

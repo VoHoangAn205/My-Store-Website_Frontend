@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import orderService from "../services/orderService";
 
-const initialState = {};
+const initialState = { parentOrder: [] };
 
 export const getAllUserOrder = createAsyncThunk(
   "order/getAllUserOrder",
@@ -10,7 +10,7 @@ export const getAllUserOrder = createAsyncThunk(
       const response = await orderService.getAllUserOrders(token);
       console.log(response.data);
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       return { message: err.response.data.message };
     }
   },
@@ -22,8 +22,7 @@ export const orderSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllUserOrder.fulfilled, (state, action) => {
-      console.log(action.payload);
-      state.token = action.payload.data.accessToken;
+      state.parentOrder = action.payload.data;
     });
   },
 });

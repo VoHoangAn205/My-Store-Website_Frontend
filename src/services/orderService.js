@@ -1,8 +1,9 @@
 import API from "./API";
+import { privateApi } from "./axiosInstance";
 
 const orderService = {
-  getAllUserOrders(token) {
-    return API.callWithToken(token).get("/order/getAllParents");
+  getAllUserOrders() {
+    return privateApi.get("/order/getAllParents");
   },
 };
 

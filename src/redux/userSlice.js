@@ -37,23 +37,43 @@ export const login = createAsyncThunk("user/login", async (data, thunkAPI) => {
   }
 });
 
+export const logout = createAsyncThunk(
+  "user/logout",
+  async (data, thunkAPI) => {
+    try {
+      const response = await userService.logout();
+      console.log(response);
+    } catch (err) {
+      return { message: err.response.data.message };
+    }
+  },
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    silentTokenSave: (state, action) => {
+      state.token = action.payload.accessToken;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
       console.log(action.payload);
       state.token = action.payload.data.accessToken;
     });
     builder.addCase(refreshToken.fulfilled, (state, action) => {
-      console.log(action.payload);
+      console.log(action.payload.data);
       state.token = action.payload.data.accessToken;
+    });
+    builder.addCase(logout.fulfilled, (action, state) => {
+      state.token = "";
+      state.userProfile = {};
     });
   },
 });
 
 const { actions, reducer } = userSlice;
 
-export const {} = actions;
+export const { silentTokenSave } = actions;
 export default reducer;
