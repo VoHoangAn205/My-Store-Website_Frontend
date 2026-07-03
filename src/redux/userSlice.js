@@ -63,10 +63,9 @@ export const userSlice = createSlice({
       state.token = action.payload.data.accessToken;
     });
     builder.addCase(refreshToken.fulfilled, (state, action) => {
-      console.log(action.payload.data);
       state.token = action.payload.data.accessToken;
     });
-    builder.addCase(logout.fulfilled, (action, state) => {
+    builder.addCase(logout.fulfilled, (state, action) => {
       state.token = "";
       state.userProfile = {};
     });

@@ -8,7 +8,7 @@ export const getAllUserOrder = createAsyncThunk(
   async (token, thunkAPI) => {
     try {
       const response = await orderService.getAllUserOrders(token);
-      console.log(response.data);
+      return response.data;
     } catch (err) {
       console.log(err.message);
       return { message: err.response.data.message };
