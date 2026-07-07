@@ -4,7 +4,12 @@ import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { logout, refreshToken, silentTokenSave } from "../redux/userSlice";
+import {
+  getUserInfo,
+  logout,
+  refreshToken,
+  silentTokenSave,
+} from "../redux/userSlice";
 import { privateApi } from "../services/axiosInstance";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 
@@ -15,7 +20,8 @@ export default function RootLayout() {
   useEffect(() => {
     dispatch(refreshToken())
       .then((data) => {
-        console.log("Session sync complete");
+        console.log("Session sync complete", data.payload);
+        dispatch(getUserInfo(data.payload.data.accessToken));
       })
       .catch((err) => {
         dispatch(logout());

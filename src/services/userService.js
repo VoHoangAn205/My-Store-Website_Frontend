@@ -13,6 +13,9 @@ const userService = {
   refreshToken() {
     return API.call().post("/refresh");
   },
+  getUserInfo(token) {
+    return API.callWithToken(token).get("/user");
+  },
 };
 
 export default userService;

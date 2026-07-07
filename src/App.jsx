@@ -9,6 +9,7 @@ import CreateProduct from "./pages/dashboard/CreateProduct";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import MyPurchases from "./pages/dashboard/MyPurchases";
+import ProductManager from "./pages/dashboard/ProductManager";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "myPurchases",
         element: <MyPurchases />,
+      },
+      {
+        path: "ProductManager",
+        element: <ProductManager />,
       },
     ],
   },

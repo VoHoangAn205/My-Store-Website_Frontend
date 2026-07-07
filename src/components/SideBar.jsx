@@ -7,24 +7,41 @@ import { logout } from "../redux/userSlice";
 export default function SideBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userProfile = useSelector((state) => state.USER.userProfile);
+  const userInfo = useSelector((state) => state.USER.userInfo);
   const isOpen = useSelector((state) => state.UI.sidebarStatus);
   const [activeTab, setActiveTab] = useState("cart");
-  const [tabs, setTabs] = useState([
+  const userRoles = userInfo?.roles || [];
+  const NAVIGATION_TABS = [
     { id: "cart", label: "Shopping Cart", icon: "fa-shopping-cart" },
     { id: "myPurchases", label: "My Purchases", icon: "fa-clock", count: 2 },
     { id: "history", label: "Order History", icon: "fa-history" },
     { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
-  ]);
-  console.log(userProfile);
-
-  const dashboard = [
     {
       id: "createProduct",
       label: "Create Product",
+      icon: "fa-solid fa-file-circle-plus",
+      requiredRole: 1984,
+    },
+    {
+      id: "productManager",
+      label: "Product Manager",
       icon: "fa-solid fa-shapes",
+      requiredRole: 1984,
     },
   ];
+
+  const roleName = () => {
+    switch (true) {
+      case userRoles.includes(5150):
+        return "Admin";
+      case userRoles.includes(1984):
+        return "Vendor";
+      case userRoles.includes(2001):
+        return "User";
+      default:
+        return "Guest";
+    }
+  };
 
   const handleCloseSidebar = () => {
     dispatch(closeSidebar());
@@ -40,8 +57,14 @@ export default function SideBar() {
     navigate(`/${id}`);
   };
 
+  const visibleTabs = NAVIGATION_TABS.filter((tab) => {
+    if (!tab.requiredRole) return true;
+
+    return userRoles.includes(tab.requiredRole);
+  });
+
   const RenderTabs = () => {
-    return tabs.map((tab) => {
+    return visibleTabs.map((tab) => {
       const isSelected = activeTab === tab.id;
       return (
         <button
@@ -99,8 +122,10 @@ export default function SideBar() {
           <div className="flex items-center gap-3 pb-6  border-b border-brand-sand/40">
             <i className="fa-solid fa-circle-user text-brand-light text-4xl"></i>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-brand-light">David</span>
-              <span className="text-xs text-brand-slate">Premium Member</span>
+              <span className="text-sm font-bold text-brand-light">
+                {userInfo?.username || "Member"}
+              </span>
+              <span className="text-xs text-brand-slate">{roleName()}</span>
             </div>
           </div>
         </div>

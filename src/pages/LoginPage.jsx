@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../redux/userSlice";
+import { getUserInfo, login } from "../redux/userSlice";
 import { useNavigate } from "react-router";
 
 function LoginPage() {
@@ -24,9 +24,10 @@ function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login(formData)).then((data) => {
-      const { status, message } = data.payload;
+    dispatch(login(formData)).then((res) => {
+      const { status, message, data } = res.payload;
       if (status) {
+        dispatch(getUserInfo(data.accessToken));
         setErrMessage("");
         navigate("/");
       } else {

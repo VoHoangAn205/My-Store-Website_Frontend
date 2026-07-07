@@ -61,9 +61,6 @@ function MyPurchases() {
         <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
           My Purchases
         </h1>
-        <p className="text-sm text-slate-500">
-          Track and manage your incoming store order invoices.
-        </p>
       </div>
 
       {orders.length === 0 ? (
@@ -78,7 +75,7 @@ function MyPurchases() {
               className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
             >
               {/* Parent Order Container Master Banner Header */}
-              <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+              <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 mb-4 flex flex-wrap justify-between items-center gap-4">
                 <div>
                   <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
                     Order Reference

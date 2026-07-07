@@ -5,7 +5,7 @@ function SubOrderRow({ subOrder }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="p-6 space-y-4 border-b border-slate-100 last:border-b-0">
+    <div className="pt-0 p-4 space-y-4 border-b border-slate-100 last:border-b-0">
       {/* Clickable Header Trigger */}
       <div
         onClick={() => setIsOpen(!isOpen)}

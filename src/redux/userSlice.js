@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import userService from "../services/userService";
 
-const initialState = { userProfile: {}, token: "" };
+const initialState = { userInfo: null, token: "" };
 
 export const register = createAsyncThunk(
   "user/register",
@@ -42,7 +42,19 @@ export const logout = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await userService.logout();
-      console.log(response);
+    } catch (err) {
+      return { message: err.response.data.message };
+    }
+  },
+);
+
+export const getUserInfo = createAsyncThunk(
+  "user/getUserInfo",
+  async (token, thunkAPI) => {
+    try {
+      const response = await userService.getUserInfo(token);
+
+      return response.data;
     } catch (err) {
       return { message: err.response.data.message };
     }
@@ -59,15 +71,17 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.token = action.payload.data.accessToken;
     });
     builder.addCase(refreshToken.fulfilled, (state, action) => {
       state.token = action.payload.data.accessToken;
     });
+    builder.addCase(getUserInfo.fulfilled, (state, action) => {
+      state.userInfo = action.payload;
+    });
     builder.addCase(logout.fulfilled, (state, action) => {
       state.token = "";
-      state.userProfile = {};
+      state.userInfo = null;
     });
   },
 });
