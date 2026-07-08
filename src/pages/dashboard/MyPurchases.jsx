@@ -3,49 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllUserOrder } from "../../redux/orderSlice";
 import SubOrderRow from "../../components/subOrderRow";
 
-// Mock Data structure modeling exactly what comes from your buyer_id backend queries
-const MOCK_PURCHASES = [
-  {
-    orderId: "ORD-2026-9941",
-    purchaseDate: "June 24, 2026 • 02:14 PM",
-    totalPrice: 145.0,
-    status: "Delivered",
-    statusColor: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    items: [
-      {
-        id: "p1",
-        name: "Minimalist Leather Cardholder",
-        price: 45.0,
-        shopName: "UrbanCraft Studio",
-        shopUrl: "/shops/urbancraft-studio",
-      },
-      {
-        id: "p2",
-        name: "Raw Denim Work Jacket",
-        price: 100.0,
-        shopName: "IndieWeave Co.",
-        shopUrl: "/shops/indieweave-co",
-      },
-    ],
-  },
-  {
-    orderId: "ORD-2026-8812",
-    purchaseDate: "June 18, 2026 • 10:05 AM",
-    totalPrice: 29.99,
-    status: "In Transit",
-    statusColor: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    items: [
-      {
-        id: "p3",
-        name: "Organic Soy Wax Candle (Sandalwood)",
-        price: 29.99,
-        shopName: "AromaTerra",
-        shopUrl: "/shops/aromaterra",
-      },
-    ],
-  },
-];
-
 function MyPurchases() {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.ORDER.parentOrder);
