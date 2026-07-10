@@ -1,19 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCategories } from "../../redux/categorySlice";
+const CATEGORIES = [
+  { id: "audio", name: "Audio Systems" },
+  { id: "monitors", name: "Studio Monitors" },
+  { id: "headphones", name: "Headphones" },
+  { id: "accessories", name: "Accessories" },
+];
 
 function CreateProduct() {
-  // 1. Unified local state tracking form fields
+  const fetchingCategories = useSelector((state) => state.CATEGORY.categories);
+  const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const dropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
     category: [],
     price: "",
     stock: "",
     description: "",
-    status: "Available", // Default product status
+    status: "",
   });
 
   // Handler for text, numeric, and select changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -23,8 +38,29 @@ function CreateProduct() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitting new product payload to Redux/API:", formData);
-    // This is where you will dispatch an async Thunk action to save the product to your database!
   };
+
+  const handleToggleCategory = (catId) => {
+    if (selectedCategories.includes(catId)) {
+      setSelectedCategories(selectedCategories.filter((id) => id !== catId));
+    } else {
+      setSelectedCategories([...selectedCategories, catId]);
+    }
+  };
+
+  const filteredCategories = fetchingCategories.filter((cat) =>
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dispatch]);
 
   return (
     <div className="max-w-4xl mx-auto pb-16">
@@ -48,6 +84,7 @@ function CreateProduct() {
             Save as Draft
           </button>
           <button
+            onSubmit={handleSubmit}
             form="product-form"
             type="submit"
             className="grow sm:flex-none px-5 py-2.5 text-sm font-semibold bg-brand-rust text-white rounded-xl shadow-md hover:bg-brand-rust/90 transition-colors duration-150"
@@ -81,23 +118,116 @@ function CreateProduct() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div ref={dropdownRef} className="relative">
               <label className="block text-xs font-bold uppercase tracking-wider text-brand-slate mb-1.5">
-                Category *
+                Categories *
               </label>
-              <select
-                name="category"
-                required
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2.5 bg-brand-light border border-brand-sand/60 rounded-xl text-sm text-brand-dark focus:outline-none focus:border-brand-rust transition-colors"
+
+              {/* Input Trigger Button Box */}
+              <div
+                onClick={() => setIsOpen(true)}
+                className="w-full min-h-11 px-3 py-2 bg-brand-light border border-brand-sand/60 rounded-xl text-sm flex flex-wrap gap-1.5 items-center cursor-pointer focus-within:border-brand-rust transition-colors"
               >
-                <option value="">Select a folder...</option>
-                <option value="audio">Audio Systems</option>
-                <option value="monitors">Studio Monitors</option>
-                <option value="headphones">Headphones</option>
-                <option value="accessories">Accessories</option>
-              </select>
+                {selectedCategories.length === 0 ? (
+                  <span className="text-slate-400 pl-1">
+                    Select categories...
+                  </span>
+                ) : (
+                  selectedCategories.map((catId) => {
+                    const matchedCat = fetchingCategories.find(
+                      (c) => c._id === catId,
+                    );
+                    return (
+                      <span
+                        key={catId}
+                        className="bg-indigo-50 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-indigo-100 flex items-center gap-1.5 animate-fade-in select-none"
+                      >
+                        {matchedCat?.name}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stops dropdown from opening/closing
+                            handleToggleCategory(catId);
+                          }}
+                          className="hover:text-indigo-900 font-bold font-mono transition-colors"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })
+                )}
+
+                <div className="absolute right-4 top-8.75 text-slate-400 pointer-events-none">
+                  <i
+                    className={`fa-solid fa-chevron-down w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                  ></i>
+                </div>
+              </div>
+              {isOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-h-60 flex flex-col">
+                  {/* Realtime Search Bar Input Header */}
+                  <div className="p-2 border-b border-slate-100 bg-slate-50 flex items-center gap-2">
+                    <i className="fa-solid fa-magnifying-glass text-slate-400 text-xs pl-2"></i>
+                    <input
+                      type="text"
+                      placeholder="Search categories..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-transparent py-1 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                      autoFocus
+                    />
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchTerm("")}
+                        className="text-xs text-slate-400 hover:text-slate-600 px-1 font-mono"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+
+                  {/* List Selection Node View */}
+                  <div className="overflow-y-auto div_ide-y div_ide-slate-50 flex-1">
+                    {filteredCategories.length === 0 ? (
+                      <div className="p-4 text-xs text-slate-400 text-center">
+                        No matching categories found
+                      </div>
+                    ) : (
+                      filteredCategories.map((cat) => {
+                        const isChecked = selectedCategories.includes(cat._id);
+                        return (
+                          <div
+                            key={cat._id}
+                            onClick={() => handleToggleCategory(cat._id)}
+                            className={`px-4 py-2.5 text-sm flex items-center justify-between cursor-pointer transition-colors select-none ${
+                              isChecked
+                                ? "bg-indigo-50/50 font-medium text-indigo-700"
+                                : "text-slate-600 hover:bg-slate-50"
+                            }`}
+                          >
+                            <span>{cat.name}</span>
+
+                            {/* Interactive Visual Checkbox */}
+                            <div
+                              className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                                isChecked
+                                  ? "bg-indigo-600 border-indigo-600 text-white"
+                                  : "border-slate-300 bg-white"
+                              }`}
+                            >
+                              {isChecked && (
+                                <i className="fa-solid fa-check text-[9px] font-black"></i>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -111,9 +241,9 @@ function CreateProduct() {
                 onChange={handleInputChange}
                 className="w-full px-4 py-2.5 bg-brand-light border border-brand-sand/60 rounded-xl text-sm text-brand-dark focus:outline-none focus:border-brand-rust transition-colors"
               >
-                <option value="">Available</option>
-                <option value="audio">Sold out</option>
-                <option value="monitors">Discontinued</option>
+                <option value="Available">Available</option>
+                <option value="Sold out">Sold out</option>
+                <option value="Discontinued">Discontinued</option>
               </select>
             </div>
           </div>
@@ -182,26 +312,26 @@ function CreateProduct() {
             </div>
           </div>
         </div>
-
-        {/* BLOCK 3: MEDIA UPLOAD AREA GRAPHICS */}
-        <div className="bg-white border border-brand-sand rounded-2xl p-6 shadow-sm space-y-4">
-          <h2 className="text-base font-bold text-brand-dark border-b border-brand-sand/40 pb-2">
-            Product Media Gallery
-          </h2>
-
-          {/* Mock Drag Drop Field Interactive Frame Wrapper */}
-          <div className="border-2 border-dashed border-brand-sand rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-brand-rust hover:bg-brand-light/40 transition-all duration-150">
-            <i className="fa-solid fa-cloud-arrow-up text-brand-slate text-3xl mb-3"></i>
-            <span className="text-sm font-semibold text-brand-dark">
-              Drag and drop images here
-            </span>
-            <span className="text-xs text-brand-slate mt-1">
-              Supports PNG, JPG, or WebP format assets up to 5MB.
-            </span>
-            <input type="file" className="hidden" multiple accept="image/*" />
-          </div>
-        </div>
       </form>
+
+      {/* BLOCK 3: MEDIA UPLOAD AREA GRAPHICS */}
+      <div className="bg-white border border-brand-sand rounded-2xl p-6 shadow-sm space-y-4">
+        <h2 className="text-base font-bold text-brand-dark border-b border-brand-sand/40 pb-2">
+          Product Media Gallery
+        </h2>
+
+        {/* Mock Drag Drop Field Interactive Frame Wrapper */}
+        <div className="border-2 border-dashed border-brand-sand rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-brand-rust hover:bg-brand-light/40 transition-all duration-150">
+          <i className="fa-solid fa-cloud-arrow-up text-brand-slate text-3xl mb-3"></i>
+          <span className="text-sm font-semibold text-brand-dark">
+            Drag and drop images here
+          </span>
+          <span className="text-xs text-brand-slate mt-1">
+            Supports PNG, JPG, or WebP format assets up to 5MB.
+          </span>
+          <input type="file" className="hidden" multiple accept="image/*" />
+        </div>
+      </div>
     </div>
   );
 }

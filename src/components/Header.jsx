@@ -1,26 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import HiddenSearchBar from "./hiddenSearchBar";
 import SearchBar from "./SearchBar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../redux/uiSlice";
 import { useNavigate } from "react-router";
+import { getAllCategories } from "../redux/categorySlice";
 
 function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const allCategories = useSelector((state) => state.CATEGORY.categories);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const handleToggle = () => {
     dispatch(toggleSidebar());
   };
 
-  const categories = [
-    { name: "All Products", href: "/shop" },
-    { name: "Audio Systems", href: "/shop/audio" },
-    { name: "Studio Monitors", href: "/shop/monitors" },
-    { name: "Headphones", href: "/shop/headphones" },
-    { name: "Cables & Accessories", href: "/shop/accessories" },
-  ];
+  const navigateUser = (id) => {
+    navigate(`/categoryPage/${id}`);
+    setDropdownOpen(false);
+  };
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -29,6 +29,10 @@ function Header() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllCategories());
   }, []);
   return (
     <>
@@ -63,14 +67,13 @@ function Header() {
               {/* THE ACTUAL DROPDOWN FLOATING CARD */}
               {dropdownOpen && (
                 <div className="absolute left-0 mt-4 w-56 bg-brand-dark border border-brand-sand/20 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  {categories.map((cat, idx) => (
+                  {allCategories.map((cate, idx) => (
                     <a
                       key={idx}
-                      href={cat.href}
                       className="flex items-center px-4 py-2.5 text-sm font-medium text-brand-slate hover:bg-white/5 hover:text-white transition-colors"
-                      onClick={() => setDropdownOpen(false)} // Close menu when an option is clicked
+                      onClick={() => navigateUser(cate._id)} // Close menu when an option is clicked
                     >
-                      {cat.name}
+                      {cate.name}
                     </a>
                   ))}
                 </div>
