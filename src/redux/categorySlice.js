@@ -4,6 +4,7 @@ import categoryService from "../services/categoryService";
 
 const initialState = {
   categories: [],
+  categoriesToUpload: [],
 };
 
 export const getAllCategories = createAsyncThunk(
@@ -25,7 +26,11 @@ export const getAllCategories = createAsyncThunk(
 export const categorySlice = createSlice({
   name: "category",
   initialState,
-  reducers: {},
+  reducers: {
+    changeCategoryUpload(state, action) {
+      state.categoriesToUpload = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllCategories.fulfilled, (state, action) => {
       state.categories = action.payload.data;
@@ -35,5 +40,5 @@ export const categorySlice = createSlice({
 
 const { actions, reducer } = categorySlice;
 
-export const {} = actions;
+export const { changeCategoryUpload } = actions;
 export default reducer;
