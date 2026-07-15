@@ -2,21 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MediaUploadArea from "../../components/MediaUploadArea";
 import CategorySelectionBar from "../../components/CategorySelectionBar";
+import { createProduct } from "../../redux/productSlice";
 
 function CreateProduct() {
   const dispatch = useDispatch();
   const categoriesToUpload = useSelector(
     (state) => state.CATEGORY.categoriesToUpload,
   );
-  const ImageToUpload = useSelector((state) => state.GALLERY.imagesToUpload);
+  const listImage = useSelector((state) => state.GALLERY.imagesToUpload);
   const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    stock: "",
+    name: "robo",
+    price: 1500,
+    stock: 20,
     description: "",
     status: "",
   });
-  console.log(ImageToUpload);
+  console.log(listImage);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +31,8 @@ function CreateProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitting new product payload to Redux/API:", formData);
+    dispatch(createProduct({ listImage }));
+    // console.log("Submitting new product payload to Redux/API:", formData);
   };
 
   return (
