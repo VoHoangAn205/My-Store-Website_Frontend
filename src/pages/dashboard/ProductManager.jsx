@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { getAllUserProducts } from "../../redux/productSlice";
 import ProductTableManager from "../../components/ProductTableManager";
+import TableSkeleton from "../../components/LoadingTableSkeleton";
 
 export default function ProductManager() {
   const dispatch = useDispatch();
@@ -21,10 +22,9 @@ export default function ProductManager() {
     const fetchVendorProducts = async () => {
       setIsLoading(true);
 
-      dispatch(getAllUserProducts())
+      dispatch(getAllUserProducts({ currentPage }))
         .then((res) => {
-          const { data } = res.payload;
-          console.log(res.payload);
+          const { data, totalPage, count, currentPage } = res.payload;
 
           setProducts(data || []);
           setTotalPages(totalPage || 1);
@@ -61,15 +61,16 @@ export default function ProductManager() {
             live listings.
           </p>
         </div>
-        <button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 sm:py-2 rounded-xl text-sm font-semibold shadow-sm transition-colors flex items-center justify-center gap-2">
+        <button
+          onClick={() => navigage("/createProduct")}
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 sm:py-2 rounded-xl text-sm font-semibold shadow-sm transition-colors flex items-center justify-center gap-2"
+        >
           <i className="fa-solid fa-plus text-xs"></i> Add Product
         </button>
       </div>
 
       {isLoading ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-400 font-mono text-xs animate-pulse">
-          Refreshing inventory catalog items...
-        </div>
+        <TableSkeleton rows={5} cols={6} />
       ) : products.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-400 font-medium text-sm">
           Your inventory is empty.

@@ -1,27 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MediaUploadArea from "../../components/MediaUploadArea";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import CategorySelectionBar from "../../components/CategorySelectionBar";
+import MediaUploadArea from "../../components/MediaUploadArea";
+import { createGallery } from "../../redux/gallerySlice";
 import { createProduct } from "../../redux/productSlice";
 
 function CreateProduct() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const categoriesToUpload = useSelector(
     (state) => state.CATEGORY.categoriesToUpload,
   );
   const listImage = useSelector((state) => state.GALLERY.imagesToUpload);
   const [formData, setFormData] = useState({
-    name: "robo",
-    price: 1500,
-    stock: 20,
+    name: "",
+    price: "",
+    stock: "",
     description: "",
     status: "",
   });
-  console.log(listImage);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
 
     setFormData((prev) => ({
       ...prev,
@@ -29,10 +31,25 @@ function CreateProduct() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createProduct({ listImage }));
-    // console.log("Submitting new product payload to Redux/API:", formData);
+
+    try {
+      const uploadedGallery = await dispatch(createGallery(listImage)).unwrap();
+
+      const finalFormData = {
+        ...formData,
+        gallery: uploadedGallery._id,
+        category: categoriesToUpload,
+      };
+
+      await dispatch(createProduct(finalFormData)).unwrap();
+
+      toast.success("Product successfully listed");
+      Navigate("/ProductManager");
+    } catch (err) {
+      toast.error(err.message || "Falled to finalize store listing");
+    }
   };
 
   return (
@@ -50,12 +67,12 @@ function CreateProduct() {
 
         {/* Quick Top Controls */}
         <div className="flex gap-3 w-full sm:w-auto">
-          <button
+          {/* <button
             type="button"
             className="grow sm:flex-none px-4 py-2.5 text-sm font-semibold border border-brand-sand rounded-xl text-brand-dark hover:bg-brand-dark hover:text-white transition-colors duration-150"
           >
             Save as Draft
-          </button>
+          </button> */}
           <button
             onSubmit={handleSubmit}
             form="product-form"

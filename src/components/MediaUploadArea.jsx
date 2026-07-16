@@ -53,8 +53,6 @@ const MediaUploadArea = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files) {
-      console.log(e.target.files);
-
       handleImageSelection(e.target.files);
     }
   };

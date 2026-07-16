@@ -1,4 +1,16 @@
 const ProductTableManager = ({ products, layout }) => {
+  const renderStatusColor = (status) => {
+    switch (status) {
+      case "Available":
+        return "bg-emerald-50 text-emerald-700";
+        break;
+      case "Sold out":
+        return "bg-rose-50 text-rose-700";
+      default:
+        return "bg-gray-200 text-gray-700";
+        break;
+    }
+  };
   return (
     <>
       {/* ==================== 1. TABLE LAYOUT (MD DESKTOP & IPAD) ==================== */}
@@ -31,18 +43,16 @@ const ProductTableManager = ({ products, layout }) => {
                 {/* Status Pill */}
                 <td className="px-6 py-4">
                   <span
-                    className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${
-                      product.quantity > 0
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "bg-rose-50 text-rose-700"
-                    }`}
+                    className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${renderStatusColor(
+                      product.status,
+                    )}`}
                   >
-                    {product.quantity > 0 ? "Active" : "Out of Stock"}
+                    {product.status}
                   </span>
                 </td>
                 {/* Stock Value */}
                 <td className="px-6 py-4 text-slate-600 font-mono">
-                  {product.quantity ?? 0} units
+                  {product.stock ?? 0} units
                 </td>
                 {/* Update Time */}
                 <td className="px-6 py-4 text-xs text-slate-400">
@@ -105,13 +115,11 @@ const ProductTableManager = ({ products, layout }) => {
                   Status
                 </p>
                 <span
-                  className={`inline-block text-[10px] px-2 py-0.5 rounded-full font-bold mt-0.5 ${
-                    product.quantity > 0
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-rose-50 text-rose-700"
-                  }`}
+                  className={`inline-block text-[10px] px-2 py-0.5 rounded-full font-bold mt-0.5 ${renderStatusColor(
+                    product.status,
+                  )}`}
                 >
-                  {product.quantity > 0 ? "Active" : "Out of Stock"}
+                  {product.status}
                 </span>
               </div>
               <div>
@@ -119,7 +127,7 @@ const ProductTableManager = ({ products, layout }) => {
                   Stock Available
                 </p>
                 <p className="text-slate-700 font-mono font-medium mt-0.5">
-                  {product.quantity ?? 0} units
+                  {product.stock ?? 0} units
                 </p>
               </div>
             </div>

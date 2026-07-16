@@ -12,7 +12,6 @@ export const getAllCategories = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await categoryService.getAllCategories();
-      console.log(response.data);
 
       return response.data;
     } catch (err) {

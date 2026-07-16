@@ -1,17 +1,12 @@
-import { Outlet } from "react-router";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import SideBar from "../components/SideBar";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  getUserInfo,
-  logout,
-  refreshToken,
-  silentTokenSave,
-} from "../redux/userSlice";
-import { privateApi } from "../services/axiosInstance";
-import LoadingSkeleton from "../components/LoadingSkeleton";
+import { Outlet } from "react-router";
+import { Toaster } from "sonner";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import LoadingPageSkeleton from "../components/LoadingPageSkeleton";
+import SideBar from "../components/SideBar";
+import { getUserInfo, logout, refreshToken } from "../redux/userSlice";
 
 export default function RootLayout() {
   const dispatch = useDispatch();
@@ -32,11 +27,12 @@ export default function RootLayout() {
   }, [dispatch]);
 
   if (isBootstrapping) {
-    return <LoadingSkeleton />;
+    return <LoadingPageSkeleton />;
   }
   return (
     <>
       <div className="min-h-screen bg-brand-light flex flex-col">
+        <Toaster position="top-right" richColors closeButton />
         <Header />
         <div className="flex grow relative">
           <SideBar />

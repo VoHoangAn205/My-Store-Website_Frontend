@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import productService from "../services/productService";
-import galleryService from "../services/galleryService";
-import imgFileFormatter from "../helpers/imgFileFormatter";
 
 const initialState = {
   productDetail: null,
@@ -30,13 +28,12 @@ export const createProduct = createAsyncThunk(
   "product/createProduct",
   async (data, thunkAPI) => {
     try {
-      const imageFile = imgFileFormatter(data.listImage);
-      const resUpload = await galleryService.uploadGallery(imageFile);
-      console.log(resUpload);
+      const response = await productService.createProduct(data);
+
+      console.log(response);
     } catch (err) {
       console.log(err.message);
-
-      return { message: err.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -47,6 +44,7 @@ export const productSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllUserProducts.fulfilled, (state, action) => {
+      console.log(action.payload.data);
       state.userProducts = action.payload.data;
     });
   },
