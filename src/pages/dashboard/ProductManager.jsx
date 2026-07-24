@@ -10,7 +10,6 @@ export default function ProductManager() {
   const dispatch = useDispatch();
   const navigage = useNavigate();
   const userProducts = useSelector((state) => state.PRODUCT.userProducts);
-  const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Pagination State mapped to your backend counters
@@ -26,7 +25,6 @@ export default function ProductManager() {
         .then((res) => {
           const { data, totalPage, count, currentPage } = res.payload;
 
-          setProducts(data || []);
           setTotalPages(totalPage || 1);
           setTotalCount(count || 0);
         })
@@ -71,7 +69,7 @@ export default function ProductManager() {
 
       {isLoading ? (
         <TableSkeleton rows={5} cols={6} />
-      ) : products.length === 0 ? (
+      ) : userProducts.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-400 font-medium text-sm">
           Your inventory is empty.
         </div>
