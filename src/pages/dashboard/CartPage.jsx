@@ -1,46 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCart, getCartList } from "../../redux/cartSlice";
+import { deleteCart, getCartList, updateCart } from "../../redux/cartSlice";
 import TableSkeleton from "../../components/LoadingTableSkeleton";
 import renderStatusColor from "../../helpers/renderStatusColor";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const CART_LIST = useSelector((state) => state.CART.cartList);
-  const [cartList, setCartList] = useState([...CART_LIST]);
+  const cartList = useSelector((state) => state.CART.cartList) || [];
   const [selectedItem, setSelectedItem] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  console.log("selected Item: ", selectedItem);
 
   const handleRemoveItem = (id) => {
     dispatch(deleteCart(id));
   };
 
+  const handleQuantityChange = (data) => {
+    dispatch(updateCart(data));
+  };
+
   const handleToggleSelectItem = (item, isSelected) => {
     if (!isSelected) {
-      setSelectedItem(selectedItem.filter((elm) => elm.id !== item.id));
+      setSelectedItem(
+        selectedItem.filter((elm) => elm.productId !== item.productId),
+      );
     } else {
       setSelectedItem([...selectedItem, item]);
     }
   };
 
-  const subtotal = selectedItem.reduce((acc, item) => {
-    const price = item?.price || 0;
-    return acc + price * item.quantity;
-  }, 0);
-  const shippingFee = subtotal > 0 ? 15 : 0; // Example flat shipping
-  const grandTotal = subtotal + shippingFee;
+  const orderValue = useMemo(() => {
+    const subtotal = selectedItem.reduce((acc, item) => {
+      const matchItem = cartList.find(
+        (elm) => elm.product?._id === item.productId,
+      );
+
+      if (!matchItem || !matchItem.product) return acc;
+      const price = matchItem.product.price || 0;
+      const quantity = matchItem.quantity || 0;
+
+      return acc + price * quantity;
+    }, 0);
+
+    const shippingFee = subtotal > 0 ? 15 : 0;
+    const voucherFreeShip = 15;
+
+    const netShipping = Math.max(0, shippingFee - voucherFreeShip);
+    const grandTotal = subtotal + netShipping;
+
+    return { subtotal, shippingFee, voucherFreeShip, grandTotal };
+  }, [selectedItem, cartList]);
 
   useEffect(() => {
-    dispatch(getCartList())
-      .then((act) => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
+    dispatch(getCartList()).finally(() => {
+      setIsLoading(false);
+    });
   }, [dispatch]);
-
-  useEffect(() => {
-    setCartList(CART_LIST);
-  }, [CART_LIST]);
 
   if (isLoading) {
     return <TableSkeleton rows={4} cols={5} />;
@@ -103,7 +119,7 @@ const CartPage = () => {
                       const itemTotal = (product.price || 0) * item.quantity;
                       const isAvailable = product.status === "Available";
                       const isChecked = selectedItem.find(
-                        (item) => item.id === product._id,
+                        (item) => item.productId === product._id,
                       );
 
                       // Safely get thumbnail/gallery image
@@ -124,7 +140,7 @@ const CartPage = () => {
                               onChange={(e) =>
                                 handleToggleSelectItem(
                                   {
-                                    id: product._id,
+                                    productId: product._id,
                                     price: product.price,
                                     quantity: item.quantity,
                                   },
@@ -169,11 +185,10 @@ const CartPage = () => {
                             <div className="flex items-center justify-center space-x-2">
                               <button
                                 onClick={() =>
-                                  handleQuantityChange(
-                                    product._id,
-                                    item.quantity,
-                                    -1,
-                                  )
+                                  handleQuantityChange({
+                                    product: product._id,
+                                    quantity: -1,
+                                  })
                                 }
                                 disabled={item.quantity <= 1}
                                 className="w-7 h-7 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
@@ -185,11 +200,10 @@ const CartPage = () => {
                               </span>
                               <button
                                 onClick={() =>
-                                  handleQuantityChange(
-                                    product._id,
-                                    item.quantity,
-                                    1,
-                                  )
+                                  handleQuantityChange({
+                                    product: product._id,
+                                    quantity: 1,
+                                  })
                                 }
                                 disabled={!isAvailable}
                                 className="w-7 h-7 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
@@ -228,6 +242,9 @@ const CartPage = () => {
                 const product = item.product || {};
                 const itemTotal = (product.price || 0) * item.quantity;
                 const isAvailable = product.status === "Available";
+                const isChecked = selectedItem.find(
+                  (item) => item.productId === product._id,
+                );
 
                 // Matching your nested gallery schema access
                 const thumbnail = Array.isArray(product.gallery?.images)
@@ -245,20 +262,24 @@ const CartPage = () => {
                         {/* Checkbox */}
                         <input
                           type="checkbox"
-                          checked={item.selected || false}
+                          checked={isChecked || false}
                           onChange={(e) =>
                             handleToggleSelectItem(
-                              product._id,
+                              {
+                                productId: product._id,
+                                price: product.price,
+                                quantity: item.quantity,
+                              },
                               e.target.checked,
                             )
                           }
                           disabled={!isAvailable}
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
+                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
                         />
                         <img
                           src={thumbnail || "/placeholder.png"}
                           alt={product.name || "Product"}
-                          className="w-14 h-14 rounded-xl object-cover border border-slate-200 bg-slate-50 flex-shrink-0"
+                          className="w-14 h-14 rounded-xl object-cover border border-slate-200 bg-slate-50 shrink-0"
                         />
                         <div>
                           <h4 className="font-semibold text-slate-800 text-sm line-clamp-1">
@@ -295,7 +316,10 @@ const CartPage = () => {
                       <div className="flex items-center space-x-2 bg-slate-50 p-1 rounded-xl border border-slate-200">
                         <button
                           onClick={() =>
-                            handleQuantityChange(product._id, item.quantity, -1)
+                            handleQuantityChange({
+                              product: product._id,
+                              quantity: -1,
+                            })
                           }
                           disabled={item.quantity <= 1}
                           className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-xs"
@@ -307,7 +331,10 @@ const CartPage = () => {
                         </span>
                         <button
                           onClick={() =>
-                            handleQuantityChange(product._id, item.quantity, 1)
+                            handleQuantityChange({
+                              product: product._id,
+                              quantity: 1,
+                            })
                           }
                           disabled={!isAvailable}
                           className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-xs"
@@ -340,19 +367,30 @@ const CartPage = () => {
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal</span>
                   <span className="font-semibold text-slate-800">
-                    ${subtotal.toFixed(2)}
+                    ${orderValue.subtotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Estimated Shipping</span>
                   <span className="font-semibold text-slate-800">
-                    ${shippingFee.toFixed(2)}
+                    ${orderValue.shippingFee.toFixed(2)}
                   </span>
                 </div>
+                {orderValue.shippingFee > 0 ? (
+                  <div className="flex justify-between text-slate-600">
+                    <span>Voucher Free Ship</span>
+                    <span className="font-semibold text-slate-800">
+                      -${orderValue.voucherFreeShip.toFixed(2)}
+                    </span>
+                  </div>
+                ) : (
+                  <></>
+                )}
+
                 <div className="border-t border-slate-100 pt-3 flex justify-between text-base font-bold text-slate-800">
                   <span>Grand Total</span>
                   <span className="text-indigo-600">
-                    ${grandTotal.toFixed(2)}
+                    ${orderValue.grandTotal.toFixed(2)}
                   </span>
                 </div>
               </div>

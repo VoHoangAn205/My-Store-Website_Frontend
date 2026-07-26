@@ -4,7 +4,7 @@ const cartService = {
   getCarts() {
     return privateApi.get("/cart");
   },
-  addNewCart(data) {
+  updateCart(data) {
     return privateApi.put(`/cart`, data);
   },
   deleteCart(id) {

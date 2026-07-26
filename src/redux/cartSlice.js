@@ -5,6 +5,20 @@ const initialState = {
   cartList: [],
 };
 
+export const updateCart = createAsyncThunk(
+  "cart/updateCart",
+  async (data, thunkAPI) => {
+    try {
+      const response = await cartService.updateCart(data);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const getCartList = createAsyncThunk(
   "cart/getCartList",
   async (data, thunkAPI) => {
@@ -42,6 +56,9 @@ export const cartSlice = createSlice({
       state.cartList = action.payload.cartItems;
     });
     builder.addCase(deleteCart.fulfilled, (state, action) => {
+      state.cartList = action.payload.cartItems;
+    });
+    builder.addCase(updateCart.fulfilled, (state, action) => {
       state.cartList = action.payload.cartItems;
     });
   },
