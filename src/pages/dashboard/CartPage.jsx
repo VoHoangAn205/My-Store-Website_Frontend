@@ -3,14 +3,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteCart, getCartList, updateCart } from "../../redux/cartSlice";
 import TableSkeleton from "../../components/LoadingTableSkeleton";
 import renderStatusColor from "../../helpers/renderStatusColor";
+import { createOrder } from "../../redux/orderSlice";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const CartPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cartList = useSelector((state) => state.CART.cartList) || [];
   const [selectedItem, setSelectedItem] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log("selected Item: ", selectedItem);
+  const handleCreateOrder = () => {
+    dispatch(createOrder({ cartItems: selectedItem })).then((act) => {
+      const data = act.payload;
+
+      if (data?.message) {
+        data.message.filter((msg) => toast.error(msg));
+      } else {
+        toast.success("Order Successfully");
+        navigate("/myPurchases");
+      }
+    });
+  };
 
   const handleRemoveItem = (id) => {
     dispatch(deleteCart(id));
@@ -396,7 +411,7 @@ const CartPage = () => {
               </div>
 
               <button
-                onClick={() => console.log("Proceeding to checkout...")}
+                onClick={handleCreateOrder}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2"
               >
                 Proceed to Checkout{" "}

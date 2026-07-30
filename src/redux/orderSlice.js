@@ -11,7 +11,22 @@ export const getAllUserOrder = createAsyncThunk(
       return response.data;
     } catch (err) {
       console.log(err.message);
-      return { message: err.response.data.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const createOrder = createAsyncThunk(
+  "order/createOrder",
+  async (data, thunkAPI) => {
+    try {
+      const response = await orderService.createOrder(data);
+      console.log(response.data);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );

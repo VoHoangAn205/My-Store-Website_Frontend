@@ -31,9 +31,10 @@ export const refreshToken = createAsyncThunk(
 export const login = createAsyncThunk("user/login", async (data, thunkAPI) => {
   try {
     const response = await userService.login(data);
-    return { status: true, data: response.data };
+
+    return { data: response.data };
   } catch (err) {
-    return { status: false, message: err.response.data.message };
+    return thunkAPI.rejectWithValue(err.response?.data || err.message);
   }
 });
 

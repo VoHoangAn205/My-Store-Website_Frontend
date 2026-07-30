@@ -25,8 +25,10 @@ function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(login(formData)).then((res) => {
-      const { status, message, data } = res.payload;
-      if (status) {
+      const { message, data } = res.payload;
+      console.log(res.payload);
+
+      if (!message) {
         dispatch(getUserInfo(data.accessToken));
         setErrMessage("");
         navigate("/");
@@ -125,11 +127,11 @@ function LoginPage() {
 
           {/* Form Divider Strip */}
           <div className="flex items-center my-6">
-            <div className="flex-grow border-t border-brand-sand/60"></div>
+            <div className="grow border-t border-brand-sand/60"></div>
             <span className="px-3 text-xs font-bold tracking-wider text-brand-slate uppercase bg-white">
               your security key
             </span>
-            <div className="flex-grow border-t border-brand-sand/60"></div>
+            <div className="grow border-t border-brand-sand/60"></div>
           </div>
 
           {/* Main Input Form Engine */}

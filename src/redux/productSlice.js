@@ -3,10 +3,25 @@ import productService from "../services/productService";
 
 const initialState = {
   productDetail: null,
-  homePageProduct: [],
+  listProducts: null,
+  isLoading: true,
   userProducts: [],
   shopProducts: [],
 };
+
+export const getAllProducts = createAsyncThunk(
+  "product/getAllProducts",
+  async (data, thunkAPI) => {
+    try {
+      const response = await productService.getAllProducts(data);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const getAllUserProducts = createAsyncThunk(
   "product/getAllUserProducts",
@@ -19,7 +34,7 @@ export const getAllUserProducts = createAsyncThunk(
     } catch (err) {
       console.log(err.message);
 
-      return { message: err.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -43,10 +58,19 @@ export const productSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllUserProducts.fulfilled, (state, action) => {
-      console.log(action.payload.data);
-      state.userProducts = action.payload.data;
-    });
+    builder
+      .addCase(getAllUserProducts.fulfilled, (state, action) => {
+        console.log(action.payload.data);
+        state.userProducts = action.payload.data;
+      })
+      .addCase(getAllProducts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllProducts.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.listProducts = action.payload;
+        state.isLoading = false;
+      });
   },
 });
 
