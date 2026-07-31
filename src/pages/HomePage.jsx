@@ -7,14 +7,13 @@ import { getAllProducts } from "../redux/productSlice";
 function HomePage() {
   const dispatch = useDispatch();
   const listProducts = useSelector((state) => state.PRODUCT.listProducts);
-  const loading = useSelector((state) => state.PRODUCT.isLoading);
-  const isOpen = useSelector((state) => state.UI.sidebarStatus);
+  const isLoading = useSelector((state) => state.PRODUCT.isLoading.homePage);
 
   useEffect(() => {
     dispatch(getAllProducts());
   }, [dispatch]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <LoadingCardSkeleton />

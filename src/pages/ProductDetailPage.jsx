@@ -1,188 +1,231 @@
-export default function ProductDetailPage(params) {
-  return (
-    <>
-      <main>
-        <a
-          href="#"
-          class="inline-flex items-center text-sm font-medium text-brand-slate hover:text-brand-rust mb-8 transition-colors duration-200 group"
-        >
-          <svg
-            class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
-          </svg>
-          Back to collection
-        </a>
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { getProductDetail } from "../redux/productSlice";
+import LoadingTableSkeleton from "../components/LoadingTableSkeleton";
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div class="space-y-4">
-            <div class="aspect-square bg-white rounded-3xl overflow-hidden border border-brand-sand shadow-sm">
-              <img
-                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
-                alt="StudioPro Headphones Main View"
-                class="w-full h-full object-cover object-center"
-              />
+export default function ProductDetailPage() {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const productData = useSelector((state) => state.PRODUCT.productDetail);
+  const isLoading = useSelector((state) => state.PRODUCT.isLoading.detailPage);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(
+    productData?.gallery?.images && productData?.gallery?.images.length > 0
+      ? productData?.gallery?.images[0].url
+      : "",
+  );
+
+  const handleSetSelectedImage = (imgUrl) => {
+    setSelectedImage(imgUrl);
+  };
+
+  useEffect(() => {
+    dispatch(getProductDetail(id));
+  }, [dispatch]);
+
+  // const sampleProduct = {
+  //   _id: "664a1b9f2c8d1e0012345678",
+  //   name: "Wireless Noise-Canceling Headphones",
+  //   price: 199.99,
+  //   status: "Available", // "Available" | "Out of Stock" | "Discontinued"
+  //   stock: 12,
+  //   description:
+  //     "Experience premium audio clarity with active noise cancellation, deep bass, and up to 30 hours of continuous battery life. Designed with ultra-soft memory foam earcups for all-day comfort during long listening sessions.",
+  //   gallery: [
+  //     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop",
+  //     "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop",
+  //     "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop",
+  //   ],
+  //   user: {
+  //     _id: "u123",
+  //     name: "TechStore Direct",
+  //     avatar:
+  //       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop",
+  //   },
+  // };
+
+  // Active image selector state (defaults to first gallery image)
+  if (isLoading || !productData) {
+    return <LoadingTableSkeleton rows={8} />;
+  }
+
+  const avatar =
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop";
+  const { name, gallery, price, status, user, _id, description, stock } =
+    productData;
+  const listImages = gallery.images;
+  console.log(listImages);
+
+  const isOutOfStock = stock <= 0 || status !== "Available";
+
+  return (
+    <div className="min-h-screen bg-brand-light py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-brand-sand/40 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 lg:p-10">
+          {/* LEFT COLUMN: Gallery */}
+          <div className="flex flex-col gap-4">
+            {/* Main Featured Image Container */}
+            <div className="w-full h-80 sm:h-96 bg-brand-light rounded-xl overflow-hidden border border-brand-sand">
+              {selectedImage ? (
+                <img
+                  src={selectedImage}
+                  alt={name}
+                  className="w-full h-full object-cover object-center transition-all duration-300"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-brand-slate">
+                  No Image Available
+                </div>
+              )}
             </div>
-            <div class="grid grid-cols-4 gap-4">
-              <button class="aspect-square rounded-xl overflow-hidden border-2 border-brand-rust bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80"
-                  class="w-full h-full object-cover"
-                />
-              </button>
-              <button class="aspect-square rounded-xl overflow-hidden border border-brand-sand bg-white opacity-60 hover:opacity-100 transition-opacity">
-                <img
-                  src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=200&q=80"
-                  class="w-full h-full object-cover"
-                />
-              </button>
-              <button class="aspect-square rounded-xl overflow-hidden border border-brand-sand bg-white opacity-60 hover:opacity-100 transition-opacity">
-                <img
-                  src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=200&q=80"
-                  class="w-full h-full object-cover"
-                />
-              </button>
-              <button class="aspect-square rounded-xl overflow-hidden border border-brand-sand bg-white opacity-60 hover:opacity-100 transition-opacity">
-                <img
-                  src="https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=200&q=80"
-                  class="w-full h-full object-cover"
-                />
-              </button>
-            </div>
+
+            {/* Gallery Thumbnails */}
+            {listImages && listImages.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {listImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSetSelectedImage(img.url)}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all shrink-0 ${
+                      selectedImage === img.url
+                        ? "border-brand-rust ring-2 ring-brand-rust/20"
+                        : "border-brand-sand opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={`${name} thumbnail ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div class="flex flex-col">
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-xs font-bold text-brand-slate uppercase tracking-widest">
-                Audio Architecture
-              </span>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-sand/30 text-brand-dark border border-brand-sand">
-                In Stock
-              </span>
-            </div>
+          {/* RIGHT COLUMN: Details */}
+          <div className="flex flex-col justify-between">
+            <div>
+              {/* Seller / User Information Badge */}
+              {user && (
+                <div className="flex items-center gap-2 mb-3">
+                  {avatar ? (
+                    <img
+                      src={avatar}
+                      alt={user.username}
+                      className="w-6 h-6 rounded-full object-cover border border-brand-sand"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center text-xs text-brand-dark font-bold">
+                      {user.username?.charAt(0) || "U"}
+                    </div>
+                  )}
+                  <span className="text-xs font-medium text-brand-slate">
+                    Sold by{" "}
+                    <span className="text-brand-dark font-semibold">
+                      {user.username || "Seller"}
+                    </span>
+                  </span>
+                </div>
+              )}
 
-            <h1 class="mt-4 text-3xl sm:text-4xl font-extrabold text-brand-dark tracking-tight leading-tight">
-              StudioPro Wireless Noise-Cancelling Headphones
-            </h1>
+              {/* Product Title */}
+              <h1 className="text-2xl sm:text-3xl font-bold text-brand-dark mb-2">
+                {name}
+              </h1>
 
-            <div class="mt-4 flex items-baseline space-x-4">
-              <span class="text-3xl font-black text-brand-dark">$299.00</span>
-              <span class="text-lg text-brand-slate line-through">$349.00</span>
-              <span class="text-xs font-bold text-brand-rust uppercase tracking-wider">
-                Save $50.00
-              </span>
-            </div>
-
-            <p class="mt-6 text-base text-brand-slate leading-relaxed">
-              Engineered for pure fidelity. Experience pristine high-definition
-              audio profile rendering mixed with advanced, hybrid adaptive
-              active noise cancellation technology. Designed with architectural
-              grade premium hardware built to survive heavy travel schedules.
-            </p>
-
-            <div class="mt-8 border-t border-brand-sand/40 pt-6">
-              <h3 class="text-sm font-bold text-brand-dark uppercase tracking-wider">
-                Colorway
-              </h3>
-              <div class="mt-3 flex items-center space-x-3">
-                <button
-                  class="w-8 h-8 rounded-full bg-[#161925] ring-2 ring-offset-2 ring-brand-rust focus:outline-none"
-                  title="Charcoal Dark"
-                ></button>
-                <button
-                  class="w-8 h-8 rounded-full bg-[#5a7684] ring-1 ring-brand-sand/60 hover:ring-brand-slate focus:outline-none"
-                  title="Slate Blue"
-                ></button>
-                <button
-                  class="w-8 h-8 rounded-full bg-[#e2dbbe] ring-1 ring-brand-sand/60 hover:ring-brand-slate focus:outline-none"
-                  title="Alabaster Sand"
-                ></button>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <div class="flex items-center justify-between text-sm">
-                <h3 class="font-bold text-brand-dark uppercase tracking-wider">
-                  Carry Case Style
-                </h3>
-                <a href="#" class="text-brand-rust hover:underline font-medium">
-                  View specs
-                </a>
-              </div>
-              <div class="mt-3 grid grid-cols-2 gap-3">
-                <button class="border-2 border-brand-dark p-3 rounded-xl text-left bg-white font-medium text-sm flex justify-between items-center">
-                  <span>Slim Leather Travel Shell</span>
-                  <span class="w-2 h-2 bg-brand-dark rounded-full"></span>
-                </button>
-                <button class="border border-brand-sand p-3 rounded-xl text-left bg-white text-brand-slate hover:border-brand-slate transition-colors text-sm font-medium">
-                  <span>Premium Hardbox Stand</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="mt-8 flex flex-col sm:flex-row items-stretch gap-4">
-              <div class="flex items-center justify-between border border-brand-sand rounded-xl bg-white px-4 py-3.5 sm:w-32">
-                <button class="text-brand-slate hover:text-brand-dark font-bold text-lg">
-                  -
-                </button>
-                <span class="text-sm font-bold text-brand-dark select-none">
-                  1
+              {/* Status Badges */}
+              <div className="flex items-center gap-3 mb-4 text-sm">
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                    status === "Available" && stock > 0
+                      ? "bg-brand-slate/15 text-brand-slate"
+                      : "bg-brand-rust/15 text-brand-rust"
+                  }`}
+                >
+                  {isOutOfStock ? "Out of Stock" : status}
                 </span>
-                <button class="text-brand-slate hover:text-brand-dark font-bold text-lg">
-                  +
-                </button>
+
+                <span className="text-xs text-brand-slate font-mono">
+                  ID: {_id}
+                </span>
               </div>
 
-              <button class="flex-grow bg-brand-rust hover:bg-brand-dark text-white text-base font-semibold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transform active:scale-[0.98] transition-all duration-150 focus:outline-none focus:ring-4 focus:ring-brand-rust/20">
-                Add to Shopping Bag
-              </button>
+              {/* Price & Stock */}
+              <div className="flex items-baseline gap-4 py-3 border-y border-brand-sand/60 mb-6">
+                <span className="text-3xl font-extrabold text-brand-rust">
+                  ${Number(price).toFixed(2)}
+                </span>
+                <span className="text-xs text-brand-slate">
+                  Stock:{" "}
+                  <strong className="text-brand-dark">
+                    {stock} items left
+                  </strong>
+                </span>
+              </div>
+
+              {/* Description */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-brand-dark mb-2">
+                  Description
+                </h3>
+                <p className="text-brand-slate text-sm leading-relaxed whitespace-pre-line">
+                  {description || "No description provided for this product."}
+                </p>
+              </div>
             </div>
 
-            <div class="mt-8 border-t border-brand-sand/40 pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-brand-slate">
-              <div class="flex items-center">
-                <svg
-                  class="w-5 h-5 text-brand-rust mr-2.5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.318-5.185a3.375 3.375 0 0 0-2.453-3.043L16.5 4.875A3.375 3.375 0 0 0 13.5 1.5h-3m-3.375 0H1.5m1.5 13.5h17.25c.621 0 1.125-.504 1.125-1.125V9.75M8.25 13.5h7.5M12 10.5V3.75"
-                  />
-                </svg>
-                Free Worldwide Cargo Shipping
+            {/* Action Section */}
+            <div className="space-y-4 pt-4 border-t border-brand-sand/60">
+              {/* Quantity Selector */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-brand-dark">
+                  Quantity:
+                </label>
+                <div className="flex items-center border border-brand-sand rounded-lg overflow-hidden bg-white">
+                  <button
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    disabled={isOutOfStock || quantity <= 1}
+                    className="px-3 py-1.5 bg-brand-light hover:bg-brand-sand/40 text-brand-dark font-bold disabled:opacity-40 transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="px-4 py-1.5 text-sm font-semibold text-brand-dark">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setQuantity((prev) => Math.min(stock, prev + 1))
+                    }
+                    disabled={isOutOfStock || quantity >= stock}
+                    className="px-3 py-1.5 bg-brand-light hover:bg-brand-sand/40 text-brand-dark font-bold disabled:opacity-40 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div class="flex items-center">
-                <svg
-                  class="w-5 h-5 text-brand-rust mr-2.5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  viewBox="0 0 24 24"
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  disabled={isOutOfStock}
+                  className="w-full bg-brand-rust hover:bg-brand-rust/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286Z"
-                  />
-                </svg>
-                3 Year Full Coverage Warranty
+                  Add to Cart
+                </button>
+
+                <button
+                  disabled={isOutOfStock}
+                  className="w-full bg-brand-dark hover:bg-brand-dark/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
+                >
+                  Buy Now
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }

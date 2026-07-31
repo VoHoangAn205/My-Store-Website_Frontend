@@ -5,6 +5,9 @@ const productService = {
   getAllProducts() {
     return API.call().get("/product");
   },
+  getProductDetail(id) {
+    return API.call().get(`/product/${id}`);
+  },
   getAllUserProducts(data) {
     return privateApi.get(
       `/product/myOwnProducts?page=${data.currentPage}&limit=5`,
