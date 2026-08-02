@@ -1,7 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import orderService from "../services/orderService";
 
-const initialState = { parentOrder: [] };
+const initialState = {
+  parentOrder: [],
+  isLoading: { getParent: true, createOrder: true },
+  errMessage: { getParent: "", createOrder: "" },
+};
 
 export const getAllUserOrder = createAsyncThunk(
   "order/getAllUserOrder",
@@ -36,9 +40,29 @@ export const orderSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllUserOrder.fulfilled, (state, action) => {
-      state.parentOrder = action.payload.data;
-    });
+    builder
+      .addCase(getAllUserOrder.pending, (state) => {
+        state.isLoading.getParent = true;
+      })
+      .addCase(getAllUserOrder.rejected, (state, action) => {
+        state.errMessage.getParent = action.payload || action.error.message;
+        state.isLoading.getParent = false;
+      })
+      .addCase(getAllUserOrder.fulfilled, (state, action) => {
+        state.parentOrder = action.payload.data;
+        state.isLoading.getParent = false;
+      })
+      .addCase(createOrder.pending, (state) => {
+        state.isLoading.createOrder = true;
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.errMessage.createOrder = action.payload || action.error.message;
+        state.isLoading.createOrder = false;
+      })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.parentOrder = action.payload.data;
+        state.isLoading.createOrder = false;
+      });
   },
 });
 

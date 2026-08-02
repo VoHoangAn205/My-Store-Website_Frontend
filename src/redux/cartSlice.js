@@ -3,6 +3,8 @@ import cartService from "../services/cartService";
 
 const initialState = {
   cartList: [],
+  isLoading: { cartList: true },
+  errMessage: { cartList: "" },
 };
 
 export const updateCart = createAsyncThunk(
@@ -52,15 +54,26 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getCartList.fulfilled, (state, action) => {
-      state.cartList = action.payload.cartItems;
-    });
-    builder.addCase(deleteCart.fulfilled, (state, action) => {
-      state.cartList = action.payload.cartItems;
-    });
-    builder.addCase(updateCart.fulfilled, (state, action) => {
-      state.cartList = action.payload.cartItems;
-    });
+    builder
+
+      .addCase(getCartList.pending, (state) => {
+        state.isLoading.cartList = true;
+      })
+      .addCase(getCartList.fulfilled, (state, action) => {
+        state.cartList = action.payload.cartItems;
+        state.isLoading.cartList = false;
+      })
+      .addCase(getCartList.rejected, (state, action) => {
+        state.errMessage.cartList = action.payload || action.error.message;
+        state.isLoading.cartList = false;
+      })
+
+      .addCase(deleteCart.fulfilled, (state, action) => {
+        state.cartList = action.payload.cartItems;
+      })
+      .addCase(updateCart.fulfilled, (state, action) => {
+        state.cartList = action.payload.cartItems;
+      });
   },
 });
 

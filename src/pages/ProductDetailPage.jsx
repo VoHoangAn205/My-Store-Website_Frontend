@@ -3,6 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { getProductDetail } from "../redux/productSlice";
 import LoadingTableSkeleton from "../components/LoadingTableSkeleton";
+import renderStatusColor from "../helpers/renderStatusColor";
+import { updateCart } from "../redux/cartSlice";
+import { createOrder } from "../redux/orderSlice";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -11,9 +15,7 @@ export default function ProductDetailPage() {
   const isLoading = useSelector((state) => state.PRODUCT.isLoading.detailPage);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(
-    productData?.gallery?.images && productData?.gallery?.images.length > 0
-      ? productData?.gallery?.images[0].url
-      : "",
+    productData?.gallery?.images[0].url || "",
   );
 
   const handleSetSelectedImage = (imgUrl) => {
@@ -24,38 +26,55 @@ export default function ProductDetailPage() {
     dispatch(getProductDetail(id));
   }, [dispatch]);
 
-  // const sampleProduct = {
-  //   _id: "664a1b9f2c8d1e0012345678",
-  //   name: "Wireless Noise-Canceling Headphones",
-  //   price: 199.99,
-  //   status: "Available", // "Available" | "Out of Stock" | "Discontinued"
-  //   stock: 12,
-  //   description:
-  //     "Experience premium audio clarity with active noise cancellation, deep bass, and up to 30 hours of continuous battery life. Designed with ultra-soft memory foam earcups for all-day comfort during long listening sessions.",
-  //   gallery: [
-  //     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop",
-  //     "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop",
-  //     "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop",
-  //   ],
-  //   user: {
-  //     _id: "u123",
-  //     name: "TechStore Direct",
-  //     avatar:
-  //       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop",
-  //   },
-  // };
+  const handleAddToCart = async () => {
+    try {
+      const res = await dispatch(updateCart({ product: id, quantity }));
 
-  // Active image selector state (defaults to first gallery image)
+      toast.success("Added to your cart");
+    } catch (err) {
+      const messages = Array.isArray(err.message)
+        ? err.message
+        : [err.message || "Failed to create order"];
+
+      messages.forEach((msg) => toast.error(msg));
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const res = await dispatch(
+        createOrder({ cartItems: [{ productId: id, quantity }] }),
+      ).unwrap();
+
+      toast.success("Order Successfully");
+      navigate("/myPurchases");
+    } catch (err) {
+      const messages = Array.isArray(err.message)
+        ? err.message
+        : [err.message || "Failed to create order"];
+
+      messages.forEach((msg) => toast.error(msg));
+    }
+  };
+
+  useEffect(() => {
+    const list = productData?.gallery?.images;
+    if (list && list.length > 0) {
+      setSelectedImage(list[0].url);
+    } else {
+      setSelectedImage("");
+    }
+  }, [productData]);
+
   if (isLoading || !productData) {
     return <LoadingTableSkeleton rows={8} />;
   }
-
+  // this is mock avatar
   const avatar =
     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop";
   const { name, gallery, price, status, user, _id, description, stock } =
     productData;
   const listImages = gallery.images;
-  console.log(listImages);
 
   const isOutOfStock = stock <= 0 || status !== "Available";
 
@@ -138,13 +157,11 @@ export default function ProductDetailPage() {
               {/* Status Badges */}
               <div className="flex items-center gap-3 mb-4 text-sm">
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                    status === "Available" && stock > 0
-                      ? "bg-brand-slate/15 text-brand-slate"
-                      : "bg-brand-rust/15 text-brand-rust"
-                  }`}
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${renderStatusColor(
+                    status,
+                  )}`}
                 >
-                  {isOutOfStock ? "Out of Stock" : status}
+                  {status}
                 </span>
 
                 <span className="text-xs text-brand-slate font-mono">
@@ -209,6 +226,7 @@ export default function ProductDetailPage() {
               {/* Action Buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
+                  onClick={handleAddToCart}
                   disabled={isOutOfStock}
                   className="w-full bg-brand-rust hover:bg-brand-rust/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
                 >
@@ -216,6 +234,7 @@ export default function ProductDetailPage() {
                 </button>
 
                 <button
+                  onClick={handleCreateOrder}
                   disabled={isOutOfStock}
                   className="w-full bg-brand-dark hover:bg-brand-dark/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
                 >

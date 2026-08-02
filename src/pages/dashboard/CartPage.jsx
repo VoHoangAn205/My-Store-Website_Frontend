@@ -11,20 +11,25 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartList = useSelector((state) => state.CART.cartList) || [];
+  const isLoading = useSelector((state) => state.CART.isLoading.cartList);
   const [selectedItem, setSelectedItem] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCreateOrder = () => {
-    dispatch(createOrder({ cartItems: selectedItem })).then((act) => {
-      const data = act.payload;
+  const handleCreateOrder = async () => {
+    try {
+      const res = await dispatch(
+        createOrder({ cartItems: selectedItem }),
+      ).unwrap();
+      console.log("order ok");
 
-      if (data?.message) {
-        data.message.filter((msg) => toast.error(msg));
-      } else {
-        toast.success("Order Successfully");
-        navigate("/myPurchases");
-      }
-    });
+      toast.success("Order Successfully");
+      navigate("/myPurchases");
+    } catch (err) {
+      const messages = Array.isArray(err.message)
+        ? err.message
+        : [err.message || "Failed to create order"];
+
+      messages.forEach((msg) => toast.error(msg));
+    }
   };
 
   const handleRemoveItem = (id) => {
@@ -68,9 +73,7 @@ const CartPage = () => {
   }, [selectedItem, cartList]);
 
   useEffect(() => {
-    dispatch(getCartList()).finally(() => {
-      setIsLoading(false);
-    });
+    dispatch(getCartList());
   }, [dispatch]);
 
   if (isLoading) {

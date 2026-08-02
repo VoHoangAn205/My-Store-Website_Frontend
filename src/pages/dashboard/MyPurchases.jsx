@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUserOrder } from "../../redux/orderSlice";
 import SubOrderRow from "../../components/subOrderRow";
+import LoadingTableSkeleton from "../../components/LoadingTableSkeleton";
 
 function MyPurchases() {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.ORDER.parentOrder);
-  console.log(orders);
+  const isLoading = useSelector((state) => state.ORDER.isLoading.getParent);
 
   useEffect(() => {
     dispatch(getAllUserOrder());
-  }, []);
+  }, [dispatch]);
 
+  if (isLoading || !orders.length) {
+    return;
+    <LoadingTableSkeleton rows={8} />;
+  }
   return (
     <div className="space-y-8">
       <div>
