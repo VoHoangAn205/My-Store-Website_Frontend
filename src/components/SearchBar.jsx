@@ -1,9 +1,25 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
 export default function SearchBar() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleOnChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleEnter = (e) => {
+    if (query.length > 0) {
+      navigate(`/search?query=${query}`);
+    }
+  };
   return (
     <>
       <div className="w-full max-w-md hidden md:block">
         <form
-          action="/search"
+          onChange={handleOnChange}
+          action={handleEnter}
           method="GET"
           className="relative flex items-center group"
         >
@@ -24,6 +40,7 @@ export default function SearchBar() {
             </svg>
           </div>
           <input
+            value={query}
             type="text"
             placeholder="Search collection..."
             className="w-full pl-11 pr-12 py-2 bg-white/10 text-white placeholder-brand-slate/70 rounded-xl border border-white/10 text-sm transition-all duration-200 focus:outline-none focus:bg-white focus:text-brand-dark focus:border-brand-rust focus:ring-4 focus:ring-brand-rust/20"

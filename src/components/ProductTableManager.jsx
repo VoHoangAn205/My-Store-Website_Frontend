@@ -23,7 +23,7 @@ const ProductTableManager = ({ products, layout }) => {
                 className="hover:bg-slate-50/50 transition-colors text-sm"
               >
                 {/* Product Title */}
-                <td className="px-6 py-4 font-semibold text-slate-800 capitalize max-w-[240px] truncate">
+                <td className="px-6 py-4 font-semibold text-slate-800 capitalize max-w-60 truncate">
                   {product.name}
                 </td>
                 {/* Price */}

@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import productService from "../services/productService";
 
 const initialState = {
-  productDetail: null,
-  listProducts: null,
-  isLoading: { detailPage: true, homePage: true },
-  errMessage: { detailPage: null, homePage: null },
+  isLoading: { detailPage: true, homePage: true, searchProduct: true },
+  errMessage: { detailPage: null, homePage: null, searchProduct: null },
+  productDetail: [],
+  listProducts: [],
   userProducts: [],
   shopProducts: [],
+  searchProduct: [],
 };
 
 export const getProductDetail = createAsyncThunk(
@@ -49,6 +50,21 @@ export const getAllUserProducts = createAsyncThunk(
     } catch (err) {
       console.log(err.message);
 
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const searchProduct = createAsyncThunk(
+  "product/searchProduct",
+  async (data, thunkAPI) => {
+    try {
+      const response = await productService.searchProduct(data);
+
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -99,6 +115,17 @@ export const productSlice = createSlice({
       .addCase(getProductDetail.fulfilled, (state, action) => {
         state.productDetail = action.payload;
         state.isLoading.detailPage = false;
+      })
+      .addCase(searchProduct.pending, (state) => {
+        state.isLoading.searchProduct = true;
+      })
+      .addCase(searchProduct.rejected, (state, action) => {
+        state.errMessage.searchProduct = action.payload || action.error.message;
+        state.isLoading.searchProduct = false;
+      })
+      .addCase(searchProduct.fulfilled, (state, action) => {
+        state.searchProduct = action.payload;
+        state.isLoading.searchProduct = false;
       });
   },
 });

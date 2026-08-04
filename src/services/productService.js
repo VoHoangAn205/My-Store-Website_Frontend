@@ -16,6 +16,12 @@ const productService = {
   createProduct(data) {
     return privateApi.post("/product", data);
   },
+  searchProduct(data) {
+    return API.call().get(`/product/search?query=${data.query}`);
+  },
+  getProductByCategory(data) {
+    return API.call().get(`/product/category/${data.category}`);
+  },
 };
 
 export default productService;

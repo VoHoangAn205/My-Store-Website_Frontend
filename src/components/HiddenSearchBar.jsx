@@ -1,9 +1,25 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
 export default function HiddenSearchBar() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleOnChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleEnter = (e) => {
+    if (query.length > 0) {
+      navigate(`/search?query=${query}`);
+    }
+  };
+
   return (
     <>
       <div className="w-full max-w-md md:hidden">
         <form
-          action="/search"
+          action={handleEnter}
           method="GET"
           className="relative flex items-center group"
         >
@@ -24,6 +40,8 @@ export default function HiddenSearchBar() {
             </svg>
           </div>
           <input
+            value={query}
+            onChange={handleOnChange}
             type="text"
             placeholder="Search collection..."
             className="w-full pl-12 pr-4 py-3 bg-white text-brand-dark placeholder-brand-slate/60 rounded-xl border border-brand-sand shadow-sm focus:outline-none focus:border-brand-rust focus:ring-4 focus:ring-brand-rust/10"
