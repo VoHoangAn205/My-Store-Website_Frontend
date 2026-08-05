@@ -17,7 +17,9 @@ const productService = {
     return privateApi.post("/product", data);
   },
   searchProduct(data) {
-    return API.call().get(`/product/search?query=${data.query}`);
+    return API.call().get(
+      `/product/search?query=${data.query}&limit=${data.limit}&page=${data.page}`,
+    );
   },
   getProductByCategory(data) {
     return API.call().get(`/product/category/${data.category}`);

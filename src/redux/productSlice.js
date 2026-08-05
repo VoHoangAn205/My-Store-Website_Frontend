@@ -8,7 +8,7 @@ const initialState = {
   listProducts: [],
   userProducts: [],
   shopProducts: [],
-  searchProduct: [],
+  searchProduct: null,
 };
 
 export const getProductDetail = createAsyncThunk(
@@ -61,7 +61,6 @@ export const searchProduct = createAsyncThunk(
     try {
       const response = await productService.searchProduct(data);
 
-      console.log(response.data);
       return response.data;
     } catch (err) {
       console.log(err.message);

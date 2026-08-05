@@ -18,7 +18,6 @@ export default function SearchBar() {
     <>
       <div className="w-full max-w-md hidden md:block">
         <form
-          onChange={handleOnChange}
           action={handleEnter}
           method="GET"
           className="relative flex items-center group"
@@ -41,6 +40,7 @@ export default function SearchBar() {
           </div>
           <input
             value={query}
+            onChange={handleOnChange}
             type="text"
             placeholder="Search collection..."
             className="w-full pl-11 pr-12 py-2 bg-white/10 text-white placeholder-brand-slate/70 rounded-xl border border-white/10 text-sm transition-all duration-200 focus:outline-none focus:bg-white focus:text-brand-dark focus:border-brand-rust focus:ring-4 focus:ring-brand-rust/20"
