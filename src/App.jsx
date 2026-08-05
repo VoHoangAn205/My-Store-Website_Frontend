@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import MyPurchases from "./pages/dashboard/MyPurchases";
 import ProductManager from "./pages/dashboard/ProductManager";
 import CartPage from "./pages/dashboard/CartPage";
+import CategoryPage from "./pages/CategoryPage";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <CartPage />,
+      },
+      {
+        path: "category/:id",
+        element: <CategoryPage />,
       },
     ],
   },

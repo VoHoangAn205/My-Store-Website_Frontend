@@ -17,7 +17,7 @@ function Header() {
   };
 
   const navigateUser = (id) => {
-    navigate(`/categoryPage/${id}`);
+    navigate(`/category/${id}`);
     setDropdownOpen(false);
   };
 

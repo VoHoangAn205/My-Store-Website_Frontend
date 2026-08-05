@@ -2,13 +2,24 @@ import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import productService from "../services/productService";
 
 const initialState = {
-  isLoading: { detailPage: true, homePage: true, searchProduct: true },
-  errMessage: { detailPage: null, homePage: null, searchProduct: null },
+  isLoading: {
+    detailPage: true,
+    homePage: true,
+    searchProduct: true,
+    listProductsByCate: true,
+  },
+  errMessage: {
+    detailPage: null,
+    homePage: null,
+    searchProduct: null,
+    listProductsByCate: null,
+  },
   productDetail: [],
   listProducts: [],
   userProducts: [],
   shopProducts: [],
   searchProduct: null,
+  listProductsByCate: null,
 };
 
 export const getProductDetail = createAsyncThunk(
@@ -55,6 +66,20 @@ export const getAllUserProducts = createAsyncThunk(
   },
 );
 
+export const getProductByCategory = createAsyncThunk(
+  "product/getProductByCategory",
+  async (data, thunkAPI) => {
+    try {
+      const response = await productService.getProductByCategory(data);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const searchProduct = createAsyncThunk(
   "product/searchProduct",
   async (data, thunkAPI) => {
@@ -89,42 +114,56 @@ export const productSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
       .addCase(getAllUserProducts.fulfilled, (state, action) => {
-        console.log(action.payload.data);
         state.userProducts = action.payload.data;
-      })
-      .addCase(getAllProducts.pending, (state) => {
-        state.isLoading.homePage = true;
-      })
-      .addCase(getAllProducts.rejected, (state, action) => {
-        state.errMessage.homePage = action.payload || action.error.message;
-        state.isLoading.homePage = false;
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
         state.listProducts = action.payload;
         state.isLoading.homePage = false;
       })
+      .addCase(getProductDetail.fulfilled, (state, action) => {
+        state.productDetail = action.payload;
+        state.isLoading.detailPage = false;
+      })
+      .addCase(searchProduct.fulfilled, (state, action) => {
+        state.searchProduct = action.payload;
+        state.isLoading.searchProduct = false;
+      })
+      .addCase(getProductByCategory.fulfilled, (state, action) => {
+        state.listProductsByCate = action.payload;
+        state.isLoading.listProductsByCate = false;
+      })
+
+      .addCase(getAllProducts.pending, (state) => {
+        state.isLoading.homePage = true;
+      })
       .addCase(getProductDetail.pending, (state) => {
         state.isLoading.detailPage = true;
+      })
+      .addCase(searchProduct.pending, (state) => {
+        state.isLoading.searchProduct = true;
+      })
+      .addCase(getProductByCategory.pending, (state) => {
+        state.isLoading.listProductsByCate = true;
+      })
+
+      .addCase(getAllProducts.rejected, (state, action) => {
+        state.errMessage.homePage = action.payload || action.error.message;
+        state.isLoading.homePage = false;
       })
       .addCase(getProductDetail.rejected, (state, action) => {
         state.errMessage.detailPage = action.payload || action.error.message;
         state.isLoading.detailPage = false;
       })
-      .addCase(getProductDetail.fulfilled, (state, action) => {
-        state.productDetail = action.payload;
-        state.isLoading.detailPage = false;
-      })
-      .addCase(searchProduct.pending, (state) => {
-        state.isLoading.searchProduct = true;
-      })
       .addCase(searchProduct.rejected, (state, action) => {
         state.errMessage.searchProduct = action.payload || action.error.message;
         state.isLoading.searchProduct = false;
       })
-      .addCase(searchProduct.fulfilled, (state, action) => {
-        state.searchProduct = action.payload;
-        state.isLoading.searchProduct = false;
+      .addCase(getProductByCategory.rejected, (state, action) => {
+        state.errMessage.listProductsByCate =
+          action.payload || action.error.message;
+        state.isLoading.listProductsByCate = false;
       });
   },
 });

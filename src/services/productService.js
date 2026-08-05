@@ -22,7 +22,9 @@ const productService = {
     );
   },
   getProductByCategory(data) {
-    return API.call().get(`/product/category/${data.category}`);
+    return API.call().get(
+      `/product/category/${data.category}?page=${data.page}&limit=${data.limit}&sort=${sort}`,
+    );
   },
 };
 
