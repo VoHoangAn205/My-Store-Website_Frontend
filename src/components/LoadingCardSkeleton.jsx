@@ -9,7 +9,10 @@ export default function LoadingCardSkeleton({ count = 8 }) {
       {/* Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {skeletons.map((_, index) => (
-          <div className="bg-white border border-brand-sand rounded-xl p-4 shadow-sm animate-pulse flex flex-col justify-between">
+          <div
+            key={index}
+            className="bg-white border border-brand-sand rounded-xl p-4 shadow-sm animate-pulse flex flex-col justify-between"
+          >
             <div>
               <div className="w-full h-48 bg-brand-light rounded-lg mb-4"></div>
               <div className="h-3 w-1/3 bg-brand-light rounded mb-2"></div>

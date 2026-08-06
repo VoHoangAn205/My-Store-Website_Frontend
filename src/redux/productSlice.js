@@ -6,20 +6,20 @@ const initialState = {
     detailPage: true,
     homePage: true,
     searchProduct: true,
-    listProductsByCate: true,
+    listProductByCate: true,
   },
   errMessage: {
     detailPage: null,
     homePage: null,
     searchProduct: null,
-    listProductsByCate: null,
+    listProductByCate: null,
   },
   productDetail: [],
   listProducts: [],
   userProducts: [],
   shopProducts: [],
   searchProduct: null,
-  listProductsByCate: null,
+  listProductByCate: null,
 };
 
 export const getProductDetail = createAsyncThunk(
@@ -131,8 +131,8 @@ export const productSlice = createSlice({
         state.isLoading.searchProduct = false;
       })
       .addCase(getProductByCategory.fulfilled, (state, action) => {
-        state.listProductsByCate = action.payload;
-        state.isLoading.listProductsByCate = false;
+        state.listProductByCate = action.payload;
+        state.isLoading.listProductByCate = false;
       })
 
       .addCase(getAllProducts.pending, (state) => {
@@ -145,7 +145,7 @@ export const productSlice = createSlice({
         state.isLoading.searchProduct = true;
       })
       .addCase(getProductByCategory.pending, (state) => {
-        state.isLoading.listProductsByCate = true;
+        state.isLoading.listProductByCate = true;
       })
 
       .addCase(getAllProducts.rejected, (state, action) => {
@@ -161,9 +161,9 @@ export const productSlice = createSlice({
         state.isLoading.searchProduct = false;
       })
       .addCase(getProductByCategory.rejected, (state, action) => {
-        state.errMessage.listProductsByCate =
+        state.errMessage.listProductByCate =
           action.payload || action.error.message;
-        state.isLoading.listProductsByCate = false;
+        state.isLoading.listProductByCate = false;
       });
   },
 });

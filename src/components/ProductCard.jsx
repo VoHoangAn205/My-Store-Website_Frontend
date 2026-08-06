@@ -44,7 +44,7 @@ export default function ProductCard({ data }) {
             </div>
 
             <button className="relative z-10 pointer-events-none bg-brand-dark group-hover:bg-brand-rust text-white text-xs sm:text-sm font-medium px-2 py-2.5 rounded-xl transition-colors duration-200">
-              Add to Cart
+              View More
             </button>
           </div>
         </div>
