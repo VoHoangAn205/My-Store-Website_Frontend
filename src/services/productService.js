@@ -5,6 +5,9 @@ const productService = {
   getAllProducts() {
     return API.call().get("/product");
   },
+  getNewArrivalProducts(data) {
+    return API.call().get(`/product?limit=${data.limit}`);
+  },
   getProductDetail(id) {
     return API.call().get(`/product/${id}`);
   },

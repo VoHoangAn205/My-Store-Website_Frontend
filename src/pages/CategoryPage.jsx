@@ -35,7 +35,6 @@ const CategoryPage = () => {
   const handleLimitChange = (e) => {
     setLimit(e.target.value);
   };
-  console.log("a");
 
   const handleSortTypeChange = (e) => {
     setSortType(e.target.value);

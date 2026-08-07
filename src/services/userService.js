@@ -16,6 +16,9 @@ const userService = {
   getUserInfo(token) {
     return API.callWithToken(token).get("/user");
   },
+  requestOtpRegister(email) {
+    return API.call().post(`/requestOtp`, email);
+  },
 };
 
 export default userService;

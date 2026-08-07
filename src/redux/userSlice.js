@@ -1,17 +1,30 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import userService from "../services/userService";
 
-const initialState = { userInfo: null, token: "" };
+const initialState = {
+  isLoading: {
+    otpRegister: true,
+    register: true,
+  },
+  errMessage: {
+    otpRegister: null,
+    register: null,
+  },
+  userInfo: null,
+  token: "",
+  otpRegister: null,
+};
 
 export const register = createAsyncThunk(
   "user/register",
   async (data, thunkAPI) => {
     try {
       const response = await userService.register(data);
-      console.log(response.data);
+
+      return response.data;
     } catch (err) {
       console.log(err);
-      return { message: err.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -44,7 +57,7 @@ export const logout = createAsyncThunk(
     try {
       const response = await userService.logout();
     } catch (err) {
-      return { message: err.response.data.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -62,6 +75,20 @@ export const getUserInfo = createAsyncThunk(
   },
 );
 
+export const requestOtpRegister = createAsyncThunk(
+  "product/requestOtpRegister",
+  async (email, thunkAPI) => {
+    try {
+      const response = await userService.requestOtpRegister(email);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -71,19 +98,43 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.token = action.payload.data.accessToken;
-    });
-    builder.addCase(refreshToken.fulfilled, (state, action) => {
-      state.token = action.payload.data.accessToken;
-    });
-    builder.addCase(getUserInfo.fulfilled, (state, action) => {
-      state.userInfo = action.payload;
-    });
-    builder.addCase(logout.fulfilled, (state, action) => {
-      state.token = "";
-      state.userInfo = null;
-    });
+    builder
+      .addCase(login.fulfilled, (state, action) => {
+        state.token = action.payload.data.accessToken;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.token = action.payload.data.accessToken;
+      })
+      .addCase(getUserInfo.fulfilled, (state, action) => {
+        state.userInfo = action.payload;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.token = "";
+        state.userInfo = null;
+      })
+      .addCase(requestOtpRegister.fulfilled, (state, action) => {
+        state.otpRegister = action.payload;
+        state.isLoading.otpRegister = false;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.isLoading.register = false;
+      })
+
+      .addCase(requestOtpRegister.pending, (state) => {
+        state.isLoading.otpRegister = true;
+      })
+      .addCase(register.pending, (state) => {
+        state.isLoading.register = true;
+      })
+
+      .addCase(requestOtpRegister.rejected, (state, action) => {
+        state.errMessage.otpRegister = action.payload || action.error.message;
+        state.isLoading.otpRegister = false;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.errMessage.register = action.payload || action.error.message;
+        state.isLoading.register = false;
+      });
   },
 });
 
