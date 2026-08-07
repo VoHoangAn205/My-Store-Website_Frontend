@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { register, requestOtpRegister } from "../redux/userSlice";
 
 function RegisterPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [errMessage, setErrMessage] = useState("");
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     password: "",
     agreeToTerms: false,
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const inputRefs = useRef([]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -20,7 +30,101 @@ function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Registering user:", formData);
+    dispatch(requestOtpRegister({ email: formData.email }));
+    setIsOtpOpen(true);
+  };
+
+  const handleResendOTP = () => {
+    dispatch(requestOtpRegister({ email: formData.email }));
+  };
+
+  // Auto-focus the first input field when the modal opens
+  useEffect(() => {
+    if (isOtpOpen) {
+      // Small timeout ensures the DOM element is mounted before focusing
+      setTimeout(() => {
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+        }
+      }, 50);
+    }
+  }, [isOtpOpen]);
+
+  // Handle typing a digit & auto-advancing focus
+  const handleChange = (e, index) => {
+    const value = e.target.value;
+    if (isNaN(value)) return;
+
+    const newOtp = [...otp];
+    // Take the last character typed
+    newOtp[index] = value.substring(value.length - 1);
+    setOtp(newOtp);
+
+    // Auto focus next input box if a digit was entered
+    if (value && index < 5 && inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  // Handle backspace to jump to the previous input box
+  const handleKeyDown = (e, index) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0 &&
+      inputRefs.current[index - 1]
+    ) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  // Handle pasting a 6-digit code
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim();
+
+    // Check if pasted value is numeric
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const digits = pasteData.slice(0, 6).split("");
+    const newOtp = [...otp];
+
+    digits.forEach((digit, i) => {
+      newOtp[i] = digit;
+    });
+
+    setOtp(newOtp);
+
+    // Focus the last filled box or next box
+    const focusIndex = Math.min(digits.length, 5);
+    if (inputRefs.current[focusIndex]) {
+      inputRefs.current[focusIndex].focus();
+    }
+  };
+
+  const handleCallRegister = async (otpValue) => {
+    try {
+      formData.otp = otpValue;
+
+      const res = await dispatch(register(formData)).unwrap();
+
+      setErrMessage("");
+      toast.success("Register successful");
+      navigate("/login");
+    } catch (err) {
+      setErrMessage(err.message);
+      toast.error(err.message || "Register failed");
+    }
+  };
+
+  const handleVerifyOTP = (e) => {
+    e.preventDefault();
+    const otpValue = otp.join("");
+    if (otpValue.length < 6) {
+      toast.warning("Please enter all 6 digits.");
+      return;
+    }
+    handleCallRegister(otpValue);
   };
 
   return (
@@ -133,10 +237,10 @@ function RegisterPage() {
                 </span>
                 <input
                   type="text"
-                  name="fullName"
+                  name="username"
                   required
                   placeholder="David Hoang"
-                  value={formData.fullName}
+                  value={formData.username}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-2.5 bg-brand-light border border-brand-sand/60 rounded-xl text-sm text-brand-dark focus:outline-none focus:border-brand-rust transition-colors"
                 />
@@ -226,7 +330,11 @@ function RegisterPage() {
                 .
               </label>
             </div>
-
+            {errMessage.length > 0 && (
+              <span className="text-red-500 bg-red-200 font-bold block w-full rounded-xl text-sm p-2">
+                {errMessage}
+              </span>
+            )}
             {/* Submission Action Button */}
             <button
               type="submit"
@@ -237,6 +345,80 @@ function RegisterPage() {
           </form>
         </div>
       </div>
+
+      {/* 2. OTP MODAL POPUP */}
+      {isOtpOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          {/* Modal Container */}
+          <div className="bg-white border border-brand-sand rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            {/* Close Button (X) */}
+            <button
+              type="button"
+              onClick={() => setIsOtpOpen(false)}
+              className="absolute top-4 right-4 text-brand-slate hover:text-brand-dark text-xl font-bold p-1 rounded-lg transition"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-brand-rust/10 text-brand-rust rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                🔒
+              </div>
+              <h2 className="text-2xl font-bold text-brand-dark">Verify OTP</h2>
+              <p className="text-sm text-brand-slate mt-1">
+                We sent a 6-digit code to your email. Enter it below to complete
+                registration.
+              </p>
+            </div>
+
+            {/* OTP Input Form */}
+            <form onSubmit={handleVerifyOTP}>
+              {/* 6 Digit Input Boxes */}
+              <div
+                className="flex items-center justify-center gap-2 sm:gap-3 mb-6"
+                onPaste={handlePaste}
+              >
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    value={digit}
+                    onChange={(e) => handleChange(e, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl font-extrabold text-brand-dark bg-brand-light border border-brand-sand rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-rust focus:border-brand-rust transition duration-200"
+                  />
+                ))}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-brand-dark hover:bg-brand-rust text-white font-semibold py-3 rounded-xl transition duration-200 shadow-md"
+              >
+                Verify & Finish Registration
+              </button>
+            </form>
+
+            {/* Resend Link */}
+            <div className="text-center mt-4">
+              <p className="text-xs text-brand-slate">
+                Didn't receive the code?{" "}
+                <button
+                  type="button"
+                  onClick={handleResendOTP}
+                  className="text-brand-rust font-semibold hover:underline"
+                >
+                  Resend OTP
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
