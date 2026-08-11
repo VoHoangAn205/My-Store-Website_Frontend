@@ -4,22 +4,27 @@ import productService from "../services/productService";
 const initialState = {
   isLoading: {
     detailPage: true,
-    homePage: true,
+    homeProductList: true,
     searchProduct: true,
     listProductByCate: true,
+    newArrivalsList: true,
+    otpRegister: true,
   },
   errMessage: {
     detailPage: null,
-    homePage: null,
+    homeProductList: null,
     searchProduct: null,
     listProductByCate: null,
+    newArrivalsList: null,
+    otpRegister: null,
   },
   productDetail: [],
-  listProducts: [],
+  homeProductList: [],
   userProducts: [],
   shopProducts: [],
   searchProduct: null,
   listProductByCate: null,
+  newArrivalsList: null,
 };
 
 export const getProductDetail = createAsyncThunk(
@@ -27,6 +32,20 @@ export const getProductDetail = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await productService.getProductDetail(id);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const getNewArrivalProducts = createAsyncThunk(
+  "product/getNewArrivalProducts",
+  async (data, thunkAPI) => {
+    try {
+      const response = await productService.getNewArrivalProducts(data);
 
       return response.data;
     } catch (err) {
@@ -55,12 +74,10 @@ export const getAllUserProducts = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await productService.getAllUserProducts(data);
-      console.log(response.data);
 
       return response.data;
     } catch (err) {
       console.log(err.message);
-
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -119,8 +136,8 @@ export const productSlice = createSlice({
         state.userProducts = action.payload.data;
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
-        state.listProducts = action.payload;
-        state.isLoading.homePage = false;
+        state.homeProductList = action.payload;
+        state.isLoading.homeProductList = false;
       })
       .addCase(getProductDetail.fulfilled, (state, action) => {
         state.productDetail = action.payload;
@@ -134,9 +151,13 @@ export const productSlice = createSlice({
         state.listProductByCate = action.payload;
         state.isLoading.listProductByCate = false;
       })
+      .addCase(getNewArrivalProducts.fulfilled, (state, action) => {
+        state.newArrivalsList = action.payload;
+        state.isLoading.newArrivalsList = false;
+      })
 
       .addCase(getAllProducts.pending, (state) => {
-        state.isLoading.homePage = true;
+        state.isLoading.homeProductList = true;
       })
       .addCase(getProductDetail.pending, (state) => {
         state.isLoading.detailPage = true;
@@ -147,10 +168,14 @@ export const productSlice = createSlice({
       .addCase(getProductByCategory.pending, (state) => {
         state.isLoading.listProductByCate = true;
       })
+      .addCase(getNewArrivalProducts.pending, (state) => {
+        state.isLoading.newArrivalsList = true;
+      })
 
       .addCase(getAllProducts.rejected, (state, action) => {
-        state.errMessage.homePage = action.payload || action.error.message;
-        state.isLoading.homePage = false;
+        state.errMessage.homeProductList =
+          action.payload || action.error.message;
+        state.isLoading.homeProductList = false;
       })
       .addCase(getProductDetail.rejected, (state, action) => {
         state.errMessage.detailPage = action.payload || action.error.message;
@@ -164,6 +189,11 @@ export const productSlice = createSlice({
         state.errMessage.listProductByCate =
           action.payload || action.error.message;
         state.isLoading.listProductByCate = false;
+      })
+      .addCase(getNewArrivalProducts.rejected, (state, action) => {
+        state.errMessage.newArrivalsList =
+          action.payload || action.error.message;
+        state.isLoading.newArrivalsList = false;
       });
   },
 });

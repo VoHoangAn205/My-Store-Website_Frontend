@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
-import { getProductDetail } from "../redux/productSlice";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
 import LoadingTableSkeleton from "../components/LoadingTableSkeleton";
 import renderStatusColor from "../helpers/renderStatusColor";
 import { updateCart } from "../redux/cartSlice";
 import { createOrder } from "../redux/orderSlice";
-import { toast } from "sonner";
+import { getProductDetail } from "../redux/productSlice";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const productData = useSelector((state) => state.PRODUCT.productDetail);
   const isLoading = useSelector((state) => state.PRODUCT.isLoading.detailPage);
   const [quantity, setQuantity] = useState(1);

@@ -13,9 +13,8 @@ function MyPurchases() {
     dispatch(getAllUserOrder());
   }, [dispatch]);
 
-  if (isLoading || !orders.length) {
-    return;
-    <LoadingTableSkeleton rows={8} />;
+  if (isLoading) {
+    return <LoadingTableSkeleton rows={4} />;
   }
   return (
     <div className="space-y-8">

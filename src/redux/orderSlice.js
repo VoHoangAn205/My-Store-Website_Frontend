@@ -12,6 +12,7 @@ export const getAllUserOrder = createAsyncThunk(
   async (token, thunkAPI) => {
     try {
       const response = await orderService.getAllUserOrders(token);
+
       return response.data;
     } catch (err) {
       console.log(err.message);
@@ -49,7 +50,7 @@ export const orderSlice = createSlice({
         state.isLoading.getParent = false;
       })
       .addCase(getAllUserOrder.fulfilled, (state, action) => {
-        state.parentOrder = action.payload.data;
+        state.parentOrder = action.payload;
         state.isLoading.getParent = false;
       })
       .addCase(createOrder.pending, (state) => {
