@@ -12,6 +12,7 @@ import MyPurchases from "./pages/dashboard/MyPurchases";
 import ProductManager from "./pages/dashboard/ProductManager";
 import CartPage from "./pages/dashboard/CartPage";
 import CategoryPage from "./pages/CategoryPage";
+import OrderManager from "./pages/dashboard/OrderManager";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "category/:id",
         element: <CategoryPage />,
+      },
+      {
+        path: "orderManager",
+        element: <OrderManager />,
       },
     ],
   },

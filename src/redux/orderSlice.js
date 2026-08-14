@@ -3,8 +3,9 @@ import orderService from "../services/orderService";
 
 const initialState = {
   parentOrder: [],
-  isLoading: { getParent: true, createOrder: true },
-  errMessage: { getParent: "", createOrder: "" },
+  shopOrders: null,
+  isLoading: { getParent: true, createOrder: true, shopOrders: true },
+  errMessage: { getParent: "", createOrder: "", shopOrders: "" },
 };
 
 export const getAllUserOrder = createAsyncThunk(
@@ -36,33 +37,61 @@ export const createOrder = createAsyncThunk(
   },
 );
 
+export const getShopOrders = createAsyncThunk(
+  "order/getShopOrders",
+  async (data, thunkAPI) => {
+    try {
+      const response = await orderService.getOrdersForShop(data);
+      console.log(response.data);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const orderSlice = createSlice({
   name: "order",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAllUserOrder.pending, (state) => {
-        state.isLoading.getParent = true;
-      })
-      .addCase(getAllUserOrder.rejected, (state, action) => {
-        state.errMessage.getParent = action.payload || action.error.message;
-        state.isLoading.getParent = false;
-      })
       .addCase(getAllUserOrder.fulfilled, (state, action) => {
         state.parentOrder = action.payload;
         state.isLoading.getParent = false;
       })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.parentOrder = action.payload.data;
+        state.isLoading.createOrder = false;
+      })
+      .addCase(getShopOrders.fulfilled, (state, action) => {
+        state.shopOrders = action.payload.data;
+        state.isLoading.shopOrders = false;
+      })
+
+      .addCase(getAllUserOrder.pending, (state) => {
+        state.isLoading.getParent = true;
+      })
       .addCase(createOrder.pending, (state) => {
         state.isLoading.createOrder = true;
+      })
+      .addCase(getShopOrders.pending, (state) => {
+        state.isLoading.shopOrders = true;
+      })
+
+      .addCase(getAllUserOrder.rejected, (state, action) => {
+        state.errMessage.getParent = action.payload || action.error.message;
+        state.isLoading.getParent = false;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.errMessage.createOrder = action.payload || action.error.message;
         state.isLoading.createOrder = false;
       })
-      .addCase(createOrder.fulfilled, (state, action) => {
-        state.parentOrder = action.payload.data;
-        state.isLoading.createOrder = false;
+      .addCase(getShopOrders.rejected, (state, action) => {
+        state.errMessage.shopOrders = action.payload || action.error.message;
+        state.isLoading.shopOrders = false;
       });
   },
 });

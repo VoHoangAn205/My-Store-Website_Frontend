@@ -28,6 +28,12 @@ export default function SideBar() {
       icon: "fa-solid fa-shapes",
       requiredRole: 1984,
     },
+    {
+      id: "orderManager",
+      label: "Order Manager",
+      icon: "fa-solid fa-boxes-packing",
+      requiredRole: 1984,
+    },
   ];
 
   const roleName = () => {
@@ -131,18 +137,37 @@ export default function SideBar() {
         </div>
 
         <nav className="flex flex-col gap-1 overflow-x-auto md:overflow-x-visible scrollbar-none">
-          <RenderTabs />
+          {userInfo ? (
+            <RenderTabs />
+          ) : (
+            <div className="flex flex-col gap-5 items-center my-3">
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-brand-rust text-brand-light rounded-2xl w-full"
+              >
+                sign in
+              </button>
+              <span>Or</span>
+              <button
+                onClick={() => navigate("/register")}
+                className="border-brand-light border-2 text-brand-light rounded-2xl w-full hover:text-brand-rust hover:border-brand-rust"
+              >
+                register
+              </button>
+            </div>
+          )}
         </nav>
-
-        <div className="block border-t border-brand-sand/40">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-brand-slate hover:text-brand-rust rounded-xl transition-colors"
-          >
-            <i className="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Log Out Account</span>
-          </button>
-        </div>
+        {userInfo && (
+          <div className="block border-t border-brand-sand/40">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-brand-slate hover:text-brand-rust rounded-xl transition-colors"
+            >
+              <i className="fa-solid fa-arrow-right-from-bracket"></i>
+              <span>Log Out Account</span>
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );
