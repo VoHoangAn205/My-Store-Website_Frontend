@@ -8,6 +8,20 @@ const initialState = {
   errMessage: { getParent: "", createOrder: "", shopOrders: "" },
 };
 
+export const shopUpdateOrderStatus = createAsyncThunk(
+  "order/shopUpdateOrderStatus",
+  async (id, thunkAPI) => {
+    try {
+      const response = await orderService.shopUpdateOrderStatus(id);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const getAllUserOrder = createAsyncThunk(
   "order/getAllUserOrder",
   async (token, thunkAPI) => {
@@ -67,7 +81,7 @@ export const orderSlice = createSlice({
         state.isLoading.createOrder = false;
       })
       .addCase(getShopOrders.fulfilled, (state, action) => {
-        state.shopOrders = action.payload.data;
+        state.shopOrders = action.payload;
         state.isLoading.shopOrders = false;
       })
 

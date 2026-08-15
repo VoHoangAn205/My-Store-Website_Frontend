@@ -1,171 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import getStatusBadgeStyle from "../../helpers/getStatusBadgeStyle";
-import { useDispatch } from "react-redux";
-
-// Mock MongoDB Data with multiple items to demonstrate pagination
-const INITIAL_ORDERS = [
-  {
-    _id: "6a7b349780d832dce275f986",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f985", totalPrice: 3600000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940ef",
-      username: "Alter",
-      email: "hoanganvo1812@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item1",
-        name: "jacket",
-        quantity: 3,
-        price: 1200000,
-        product: "6a4e04b2",
-      },
-    ],
-    subStatus: "pending",
-    subTotalPrice: 3600000,
-    createdAt: "2026-08-11T14:41:27.608Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f987",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f985", totalPrice: 5200000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e0",
-      username: "Sarah",
-      email: "sarah.m@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item2",
-        name: "denim jeans",
-        quantity: 2,
-        price: 800000,
-        product: "6a4e04b3",
-      },
-    ],
-    subStatus: "processing",
-    subTotalPrice: 1600000,
-    createdAt: "2026-08-11T13:20:10.100Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f988",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f989", totalPrice: 2400000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e1",
-      username: "Michael",
-      email: "mike99@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item3",
-        name: "leather boots",
-        quantity: 1,
-        price: 2400000,
-        product: "6a4e04b4",
-      },
-    ],
-    subStatus: "shipped",
-    subTotalPrice: 2400000,
-    createdAt: "2026-08-10T18:15:00.000Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f989",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f990", totalPrice: 900000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e2",
-      username: "Elena",
-      email: "elena.v@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item4",
-        name: "cotton t-shirt",
-        quantity: 3,
-        price: 300000,
-        product: "6a4e04b5",
-      },
-    ],
-    subStatus: "delivered",
-    subTotalPrice: 900000,
-    createdAt: "2026-08-09T10:05:44.000Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f990",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f991", totalPrice: 1500000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e3",
-      username: "David",
-      email: "david_k@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item5",
-        name: "hoodie",
-        quantity: 1,
-        price: 1500000,
-        product: "6a4e04b6",
-      },
-    ],
-    subStatus: "cancelled",
-    subTotalPrice: 1500000,
-    createdAt: "2026-08-08T16:50:20.000Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f991",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f992", totalPrice: 4500000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e4",
-      username: "Chloe",
-      email: "chloe_dev@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item6",
-        name: "winter coat",
-        quantity: 1,
-        price: 4500000,
-        product: "6a4e04b7",
-      },
-    ],
-    subStatus: "pending",
-    subTotalPrice: 4500000,
-    createdAt: "2026-08-08T09:12:10.000Z",
-  },
-  {
-    _id: "6a7b349780d832dce275f992",
-    shopId: "6a22fc5feb5f681bc0ecd327",
-    historicalShopSnapshot: { username: "Join", email: "dcgame205@gmail.com" },
-    parentOrder: { _id: "6a7b349780d832dce275f993", totalPrice: 700000 },
-    user: {
-      _id: "6a761b7decbc1e3bafc940e5",
-      username: "Lucas",
-      email: "lucas_b@gmail.com",
-    },
-    orderItems: [
-      {
-        _id: "item7",
-        name: "beanie",
-        quantity: 2,
-        price: 350000,
-        product: "6a4e04b8",
-      },
-    ],
-    subStatus: "processing",
-    subTotalPrice: 700000,
-    createdAt: "2026-08-07T11:00:00.000Z",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { getShopOrders, shopUpdateOrderStatus } from "../../redux/orderSlice";
+import { useSearchParams } from "react-router";
+import { toast } from "sonner";
 
 const STATUS_OPTIONS = [
   "pending",
@@ -177,33 +15,59 @@ const STATUS_OPTIONS = [
 
 const ShopOrderManager = () => {
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
+  const isLoading = useSelector((state) => state.ORDER.isLoading.shopOrders);
+  const listOrder = useSelector((state) => state.ORDER.shopOrders);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+
+  // const [orders, setOrders] = useState(INITIAL_ORDERS);
   const [selectedTab, setSelectedTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeOrderModal, setActiveOrderModal] = useState(null);
+  console.log(page);
 
   // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [limit, setLimit] = useState(2);
+
+  const {
+    data = [],
+    count = 0,
+    totalPage = 1,
+    currentPage = 1,
+  } = listOrder || {};
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPage) return;
+
+    setSearchParams({ page: newPage.toString() });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Status Change Handler
-  const handleStatusChange = (orderId, newSubStatus) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order._id === orderId ? { ...order, subStatus: newSubStatus } : order,
-      ),
-    );
+  const handleStatusChange = async (orderId, newSubStatus) => {
+    try {
+      const res = await dispatch(shopUpdateOrderStatus(orderId)).unwrap();
 
-    if (activeOrderModal && activeOrderModal._id === orderId) {
-      setActiveOrderModal((prev) => ({ ...prev, subStatus: newSubStatus }));
+      console.log(res);
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message || "Failed to update this order's status");
     }
+    // if (activeOrderModal && activeOrderModal._id === orderId) {
+    //   setActiveOrderModal((prev) => ({ ...prev, subStatus: newSubStatus }));
+    // }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    //handle here
   };
 
   // Filter Logic
   const filteredOrders = useMemo(() => {
     const term = searchTerm.toLowerCase().trim();
 
-    return orders.filter((order) => {
+    return data.filter((order) => {
       const matchesTab =
         selectedTab === "all" || selectedTab === order.subStatus;
       const matchesSearch =
@@ -213,7 +77,7 @@ const ShopOrderManager = () => {
 
       return matchesSearch && matchesTab;
     });
-  }, [orders, searchTerm, searchTerm]);
+  }, [data, searchTerm]);
 
   const getNextStatusConfig = (currentStatus) => {
     switch (currentStatus?.toLowerCase()) {
@@ -234,20 +98,25 @@ const ShopOrderManager = () => {
     }
   };
 
-  // Reset to page 1 whenever filters or itemsPerPage change
+  // Reset to page 1 whenever filters or limit change
   useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedTab, searchTerm, itemsPerPage]);
+    setSearchParams({ page: "1" });
+  }, [selectedTab, searchTerm, limit]);
+
+  useEffect(() => {
+    dispatch(
+      getShopOrders({
+        limit,
+        page,
+        status: selectedTab,
+      }),
+    );
+  }, [dispatch, page, selectedTab, limit]);
 
   // Pagination Calculations
-  const totalItems = filteredOrders.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const paginatedOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const totalItems = count;
+  const startIndex = totalItems > 0 ? (page - 1) * limit + 1 : 0;
+  const endIndex = Math.min(page * limit, totalItems);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-3 sm:p-6 md:p-8">
@@ -318,8 +187,8 @@ const ShopOrderManager = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {paginatedOrders.length > 0 ? (
-                  paginatedOrders.map((order) => (
+                {filteredOrders.length > 0 ? (
+                  filteredOrders.map((order) => (
                     <tr
                       key={order._id}
                       onClick={() => setActiveOrderModal(order)}
@@ -389,8 +258,8 @@ const ShopOrderManager = () => {
 
           {/* 2. MOBILE CARD VIEW (Shown only on small screens) */}
           <div className="block sm:hidden divide-y divide-slate-100">
-            {paginatedOrders.length > 0 ? (
-              paginatedOrders.map((order) => (
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
                 <div
                   key={order._id}
                   onClick={() => setActiveOrderModal(order)}
@@ -467,8 +336,8 @@ const ShopOrderManager = () => {
                 </label>
                 <select
                   id="perPage"
-                  value={itemsPerPage}
-                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                  value={limit}
+                  onChange={(e) => setLimit(Number(e.target.value))}
                   className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
                 >
                   <option value={5}>5</option>
@@ -482,7 +351,7 @@ const ShopOrderManager = () => {
             <div className="flex items-center justify-center gap-1 w-full md:w-auto">
               {/* Desktop First Page */}
               <button
-                onClick={() => setCurrentPage(1)}
+                onClick={() => handlePageChange(1)}
                 disabled={currentPage === 1}
                 className="hidden sm:block p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition text-xs font-bold"
                 title="First Page"
@@ -492,7 +361,7 @@ const ShopOrderManager = () => {
 
               {/* Prev */}
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition text-xs font-medium flex-1 sm:flex-none text-center"
               >
@@ -501,35 +370,32 @@ const ShopOrderManager = () => {
 
               {/* Number Buttons (Hidden on mobile to save space) */}
               <div className="hidden sm:flex items-center gap-1 px-1">
-                {Array.from(
-                  { length: totalPages },
-                  (_, index) => index + 1,
-                ).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-7 h-7 rounded-lg text-xs font-bold transition ${
-                      currentPage === page
-                        ? "bg-slate-900 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-slate-200/60"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPage }, (_, index) => index + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition ${
+                        currentPage === page
+                          ? "bg-slate-900 text-white shadow-sm"
+                          : "text-slate-600 hover:bg-slate-200/60"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
               </div>
 
               {/* Mobile Page Indicator */}
               <span className="sm:hidden text-xs text-slate-500 px-2 font-medium">
-                {currentPage} / {totalPages}
+                {currentPage} / {totalPage}
               </span>
 
               {/* Next */}
               <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages || totalItems === 0}
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPage || totalItems === 0}
                 className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition text-xs font-medium flex-1 sm:flex-none text-center"
               >
                 Next
@@ -537,8 +403,8 @@ const ShopOrderManager = () => {
 
               {/* Desktop Last Page */}
               <button
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages || totalItems === 0}
+                onClick={() => handlePageChange(totalPage)}
+                disabled={currentPage === totalPage || totalItems === 0}
                 className="hidden sm:block p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition text-xs font-bold"
                 title="Last Page"
               >
@@ -602,14 +468,7 @@ const ShopOrderManager = () => {
                     Parent Reference
                   </h3>
                   <p className="text-slate-700 font-mono text-[11px]">
-                    ID: #{activeOrderModal.parentOrder?._id}
-                  </p>
-                  <p className="text-slate-700 mt-0.5">
-                    Parent Total:{" "}
-                    <strong>
-                      $
-                      {activeOrderModal.parentOrder?.totalPrice?.toLocaleString()}
-                    </strong>
+                    ID: #{activeOrderModal.parentOrder}
                   </p>
                 </div>
               </div>
@@ -663,9 +522,7 @@ const ShopOrderManager = () => {
                   ) && (
                     <button
                       type="button"
-                      onClick={() =>
-                        handleStatusChange(activeOrderModal._id, "cancelled")
-                      }
+                      onClick={() => handleCancelOrder(activeOrderModal._id)}
                       className="px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition text-center"
                     >
                       Cancel Order
