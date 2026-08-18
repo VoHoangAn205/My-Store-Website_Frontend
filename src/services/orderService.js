@@ -16,6 +16,9 @@ const orderService = {
   shopUpdateOrderStatus(id) {
     return privateApi.put(`/order/shopOrderStatus/${id}`);
   },
+  shopCancelOrder(id) {
+    return privateApi.put(`/order/shopCancel/${id}`);
+  },
 };
 
 export default orderService;

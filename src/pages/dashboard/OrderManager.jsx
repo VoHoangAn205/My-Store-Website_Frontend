@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import getStatusBadgeStyle from "../../helpers/getStatusBadgeStyle";
 import { useDispatch, useSelector } from "react-redux";
-import { getShopOrders, shopUpdateOrderStatus } from "../../redux/orderSlice";
+import {
+  getShopOrders,
+  shopCancelOrder,
+  shopUpdateOrderStatus,
+} from "../../redux/orderSlice";
 import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 
@@ -15,7 +19,6 @@ const STATUS_OPTIONS = [
 
 const ShopOrderManager = () => {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.ORDER.isLoading.shopOrders);
   const listOrder = useSelector((state) => state.ORDER.shopOrders);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
@@ -24,10 +27,8 @@ const ShopOrderManager = () => {
   const [selectedTab, setSelectedTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeOrderModal, setActiveOrderModal] = useState(null);
-  console.log(page);
-
   // Pagination State
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(5);
 
   const {
     data = [],
@@ -45,22 +46,56 @@ const ShopOrderManager = () => {
   };
 
   // Status Change Handler
-  const handleStatusChange = async (orderId, newSubStatus) => {
+  const handleStatusChange = async (orderId) => {
     try {
       const res = await dispatch(shopUpdateOrderStatus(orderId)).unwrap();
 
-      console.log(res);
+      await dispatch(
+        getShopOrders({
+          limit,
+          page,
+          status: selectedTab,
+        }),
+      );
+
+      if (activeOrderModal && activeOrderModal._id === orderId) {
+        setActiveOrderModal((prev) => ({
+          ...prev,
+          subStatus: res?.subStatus,
+        }));
+      }
+
+      toast.success("Status update successful");
     } catch (err) {
       console.log(err.message);
       toast.error(err.message || "Failed to update this order's status");
     }
-    // if (activeOrderModal && activeOrderModal._id === orderId) {
-    //   setActiveOrderModal((prev) => ({ ...prev, subStatus: newSubStatus }));
-    // }
   };
 
   const handleCancelOrder = async (orderId) => {
-    //handle here
+    try {
+      const res = await dispatch(shopCancelOrder(orderId)).unwrap();
+
+      await dispatch(
+        getShopOrders({
+          limit,
+          page,
+          status: selectedTab,
+        }),
+      );
+
+      if (activeOrderModal && activeOrderModal._id === orderId) {
+        setActiveOrderModal((prev) => ({
+          ...prev,
+          subStatus: res?.subStatus,
+        }));
+      }
+
+      toast.success("Order cancelled");
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message || "Cannot cancel this order");
+    }
   };
 
   // Filter Logic
@@ -197,7 +232,7 @@ const ShopOrderManager = () => {
                       <td className="py-4 px-4 font-mono font-bold text-slate-900 text-xs">
                         #{order._id.slice(-8)}
                         <span className="block text-[10px] text-slate-400 font-sans font-normal">
-                          Parent: #{order.parentOrder?._id?.slice(-8)}
+                          Parent: #{order.parentOrder?.slice(-8)}
                         </span>
                       </td>
                       <td className="py-4 px-4">
@@ -539,10 +574,7 @@ const ShopOrderManager = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            handleStatusChange(
-                              activeOrderModal._id,
-                              nextConfig.nextStatus,
-                            )
+                            handleStatusChange(activeOrderModal._id)
                           }
                           className={`px-5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 ${nextConfig.buttonStyle}`}
                         >

@@ -8,12 +8,23 @@ const initialState = {
   errMessage: { getParent: "", createOrder: "", shopOrders: "" },
 };
 
+export const shopCancelOrder = createAsyncThunk(
+  "order/shopCancelOrder",
+  async (id, thunkAPI) => {
+    try {
+      const response = await orderService.shopCancelOrder(id);
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 export const shopUpdateOrderStatus = createAsyncThunk(
   "order/shopUpdateOrderStatus",
   async (id, thunkAPI) => {
     try {
       const response = await orderService.shopUpdateOrderStatus(id);
-
       return response.data;
     } catch (err) {
       console.log(err.message);

@@ -14,7 +14,6 @@ export default function SideBar() {
   const NAVIGATION_TABS = [
     { id: "cart", label: "Shopping Cart", icon: "fa-shopping-cart" },
     { id: "myPurchases", label: "My Purchases", icon: "fa-clock", count: 2 },
-    { id: "history", label: "Order History", icon: "fa-history" },
     { id: "settings", label: "Account Settings", icon: "fa-user-gear" },
     {
       id: "createProduct",
