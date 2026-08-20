@@ -1,18 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import RootLayout from "./layouts/rootLayout";
+import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import SearchPage from "./pages/SearchPage";
-import UserProfileDashboard from "./pages/UserProfileDashboard";
-import CreateProduct from "./pages/dashboard/CreateProduct";
 import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import MyPurchases from "./pages/dashboard/MyPurchases";
-import ProductManager from "./pages/dashboard/ProductManager";
+import SearchPage from "./pages/SearchPage";
+import AccountPage from "./pages/dashboard/AccountSettingPage";
 import CartPage from "./pages/dashboard/CartPage";
-import CategoryPage from "./pages/CategoryPage";
+import CreateProduct from "./pages/dashboard/CreateProduct";
+import MyPurchases from "./pages/dashboard/MyPurchases";
 import OrderManager from "./pages/dashboard/OrderManager";
+import ProductManager from "./pages/dashboard/ProductManager";
 
 const router = createBrowserRouter([
   {
@@ -41,8 +41,8 @@ const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "profile",
-        element: <UserProfileDashboard />,
+        path: "account",
+        element: <AccountPage />,
       },
       {
         path: "createProduct",

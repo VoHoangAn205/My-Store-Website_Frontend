@@ -1,4 +1,5 @@
 import API from "./API";
+import { privateApi } from "./axiosInstance";
 
 const userService = {
   register(data) {
@@ -13,11 +14,14 @@ const userService = {
   refreshToken() {
     return API.call().post("/refresh");
   },
-  getUserInfo(token) {
-    return API.callWithToken(token).get("/user");
+  getUserInfo() {
+    return privateApi.get("/user");
   },
   requestOtpRegister(email) {
     return API.call().post(`/requestOtp`, email);
+  },
+  upgradeToVendor() {
+    return privateApi.put(`/user/upgradeToVendor`);
   },
 };
 

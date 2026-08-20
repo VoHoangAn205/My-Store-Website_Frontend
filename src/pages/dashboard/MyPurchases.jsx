@@ -8,6 +8,7 @@ function MyPurchases() {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.ORDER.parentOrder);
   const isLoading = useSelector((state) => state.ORDER.isLoading.getParent);
+  console.log(orders);
 
   useEffect(() => {
     dispatch(getAllUserOrder());

@@ -30,7 +30,7 @@ function SubOrderRow({ subOrder }) {
             Shipment from Shop:{" "}
             <a href="#">
               <span className="font-mono font-bold text-slate-700">
-                {subOrder.historicalShopSnapshot.username}
+                {subOrder.shopId?.username || ""}
               </span>
             </a>
           </span>

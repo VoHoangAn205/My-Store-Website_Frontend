@@ -3,10 +3,12 @@ import userService from "../services/userService";
 
 const initialState = {
   isLoading: {
+    userInfo: true,
     otpRegister: true,
     register: true,
   },
   errMessage: {
+    userInfo: null,
     otpRegister: null,
     register: null,
   },
@@ -70,7 +72,8 @@ export const getUserInfo = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return { message: err.response.data.message };
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -80,6 +83,20 @@ export const requestOtpRegister = createAsyncThunk(
   async (email, thunkAPI) => {
     try {
       const response = await userService.requestOtpRegister(email);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const requestUpgradeToVendor = createAsyncThunk(
+  "product/requestUpgradeToVendor",
+  async (email, thunkAPI) => {
+    try {
+      const response = await userService.upgradeToVendor(email);
 
       return response.data;
     } catch (err) {
@@ -107,6 +124,7 @@ export const userSlice = createSlice({
       })
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.userInfo = action.payload;
+        state.isLoading.userInfo = false;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.token = "";
@@ -126,6 +144,9 @@ export const userSlice = createSlice({
       .addCase(register.pending, (state) => {
         state.isLoading.register = true;
       })
+      .addCase(getUserInfo.pending, (state) => {
+        state.isLoading.userInfo = true;
+      })
 
       .addCase(requestOtpRegister.rejected, (state, action) => {
         state.errMessage.otpRegister = action.payload || action.error.message;
@@ -134,6 +155,10 @@ export const userSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.errMessage.register = action.payload || action.error.message;
         state.isLoading.register = false;
+      })
+      .addCase(getUserInfo.rejected, (state, action) => {
+        state.errMessage.userInfo = action.payload || action.error.message;
+        state.isLoading.userInfo = false;
       });
   },
 });

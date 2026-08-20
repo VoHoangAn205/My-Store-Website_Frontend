@@ -25,11 +25,10 @@ function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(login(formData)).then((res) => {
-      const { message, data } = res.payload;
-      console.log(res.payload);
+      const { message } = res.payload;
 
       if (!message) {
-        dispatch(getUserInfo(data.accessToken));
+        dispatch(getUserInfo());
         setErrMessage("");
         navigate("/");
       } else {

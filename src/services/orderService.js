@@ -14,7 +14,7 @@ const orderService = {
     return privateApi.post("/order/", data);
   },
   shopUpdateOrderStatus(id) {
-    return privateApi.put(`/order/shopOrderStatus/${id}`);
+    return privateApi.put(`/order/shopUpdateStatus/${id}`);
   },
   shopCancelOrder(id) {
     return privateApi.put(`/order/shopCancel/${id}`);
