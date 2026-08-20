@@ -5,15 +5,23 @@ import ProductCard from "../components/ProductCard";
 import { getAllProducts, getNewArrivalProducts } from "../redux/productSlice";
 import NoProductFound from "../components/NoProductFound";
 import ProductCardv2 from "../components/ProductCardv2";
+import { Link } from "react-router";
+import { CategoryCardSkeleton } from "../components/CategoryCardSkeleton";
+import CategoryCard from "../components/CategoryCard";
 
 function HomePage() {
   const dispatch = useDispatch();
   const newArrivalsList = useSelector((state) => state.PRODUCT.newArrivalsList);
-  const categoryList = useSelector((state) => state.CATEGORY.categories);
+  const homePageCategories = useSelector(
+    (state) => state.CATEGORY.homePageCategories,
+  );
+  const categoryIsLoading = useSelector(
+    (state) => state.CATEGORY.isLoading.categories,
+  );
   const isLoading = useSelector(
     (state) => state.PRODUCT.isLoading.newArrivalsList,
   );
-  console.log(categoryList);
+  console.log(homePageCategories);
 
   useEffect(() => {
     dispatch(getNewArrivalProducts({ limit: 4 }));
@@ -54,84 +62,13 @@ function HomePage() {
 
               {/* Category Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                {/* Category Card */}
-                <a
-                  href="/category/audio"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    🎧
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Audio Gear
-                  </span>
-                  <span className="text-xs text-brand-slate">24 items</span>
-                </a>
-
-                <a
-                  href="/category/cameras"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    📷
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Cameras
-                  </span>
-                  <span className="text-xs text-brand-slate">18 items</span>
-                </a>
-
-                <a
-                  href="/category/laptops"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    💻
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Laptops
-                  </span>
-                  <span className="text-xs text-brand-slate">32 items</span>
-                </a>
-
-                <a
-                  href="/category/wearables"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    ⌚
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Wearables
-                  </span>
-                  <span className="text-xs text-brand-slate">15 items</span>
-                </a>
-
-                <a
-                  href="/category/accessories"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    🔌
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Accessories
-                  </span>
-                  <span className="text-xs text-brand-slate">45 items</span>
-                </a>
-
-                <a
-                  href="/category/gaming"
-                  className="bg-white border border-brand-sand rounded-xl p-4 text-center hover:border-brand-rust hover:shadow-md transition group"
-                >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-brand-light rounded-full flex items-center justify-center text-brand-rust group-hover:scale-110 transition">
-                    🎮
-                  </div>
-                  <span className="text-sm font-bold text-brand-dark block">
-                    Gaming
-                  </span>
-                  <span className="text-xs text-brand-slate">12 items</span>
-                </a>
+                {categoryIsLoading ? (
+                  <CategoryCardSkeleton />
+                ) : (
+                  homePageCategories.map((cate) => {
+                    return <CategoryCard data={cate} />;
+                  })
+                )}
               </div>
             </section>
 

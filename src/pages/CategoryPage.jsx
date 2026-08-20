@@ -72,9 +72,7 @@ const CategoryPage = () => {
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-brand-dark">
-                  Audio & Sound
-                </h1>
+                <h1 className="text-3xl font-bold text-brand-dark">Category</h1>
                 <p className="text-sm text-brand-slate mt-1">
                   Explore top-grade noise-canceling headphones, speakers, and
                   audio gear.

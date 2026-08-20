@@ -1,10 +1,13 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import productService from "../services/productService";
 import categoryService from "../services/categoryService";
 
 const initialState = {
   categories: [],
+  homePageCategories: [],
   categoriesToUpload: [],
+  isLoading: { categories: true },
+  errMessage: { categories: null },
 };
 
 export const getAllCategories = createAsyncThunk(
@@ -16,8 +19,7 @@ export const getAllCategories = createAsyncThunk(
       return response.data;
     } catch (err) {
       console.log(err.message);
-
-      return { message: err.message };
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -31,9 +33,19 @@ export const categorySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getAllCategories.fulfilled, (state, action) => {
-      state.categories = action.payload.data;
-    });
+    builder
+      .addCase(getAllCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+        state.homePageCategories = action.payload.slice(0, 6);
+        state.isLoading.categories = false;
+      })
+      .addCase(getAllCategories.pending, (state, action) => {
+        state.isLoading.categories = true;
+      })
+      .addCase(getAllCategories.rejected, (state, action) => {
+        state.errMessage.categories = action.payload || action.error.message;
+        state.isLoading.categories = false;
+      });
   },
 });
 
