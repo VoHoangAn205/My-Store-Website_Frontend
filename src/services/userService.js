@@ -1,5 +1,4 @@
-import API from "./API";
-import { privateApi } from "./axiosInstance";
+import API, { axiosPrivate } from "./API";
 
 const userService = {
   register(data) {
@@ -15,13 +14,13 @@ const userService = {
     return API.call().post("/refresh");
   },
   getUserInfo() {
-    return privateApi.get("/user");
+    return axiosPrivate.get("/user");
   },
   requestOtpRegister(email) {
     return API.call().post(`/requestOtp`, email);
   },
   upgradeToVendor() {
-    return privateApi.put(`/user/upgradeToVendor`);
+    return axiosPrivate.put(`/user/upgradeToVendor`);
   },
 };
 

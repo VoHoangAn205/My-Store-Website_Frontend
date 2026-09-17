@@ -6,24 +6,36 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import LoadingPageSkeleton from "../components/LoadingPageSkeleton";
 import SideBar from "../components/SideBar";
-import { getUserInfo, logout, refreshToken } from "../redux/userSlice";
+import {
+  clearLocalAuthState,
+  getUserInfo,
+  refreshToken,
+} from "../redux/userSlice";
 
 export default function RootLayout() {
   const dispatch = useDispatch();
   const [isBootstrapping, setIsBootstrapping] = useState(true);
 
   useEffect(() => {
-    dispatch(refreshToken())
-      .then((data) => {
-        console.log("Session sync complete", data.payload);
-        dispatch(getUserInfo(data.payload.data.accessToken));
-      })
-      .catch((err) => {
-        dispatch(logout());
-      })
-      .finally(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (!isLoggedIn) {
+      setIsBootstrapping(false);
+      return;
+    }
+
+    const firstRefresh = async () => {
+      try {
+        const res = await dispatch(refreshToken()).unwrap();
+        dispatch(getUserInfo(res.data.accessToken));
+      } catch (err) {
+        localStorage.removeItem("isLoggedIn");
+        dispatch(clearLocalAuthState());
+      } finally {
         setIsBootstrapping(false);
-      });
+      }
+    };
+    firstRefresh();
   }, [dispatch]);
 
   if (isBootstrapping) {

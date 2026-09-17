@@ -1,8 +1,8 @@
-import { privateApi } from "./axiosInstance";
+import { axiosPrivate } from "./API";
 
 const galleryService = {
   uploadGallery(formData) {
-    return privateApi.post("/gallery", formData, {
+    return axiosPrivate.post("/gallery", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

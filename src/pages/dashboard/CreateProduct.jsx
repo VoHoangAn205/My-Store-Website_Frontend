@@ -19,7 +19,7 @@ function CreateProduct() {
     price: "",
     stock: "",
     description: "",
-    status: "",
+    status: "Available",
   });
 
   const handleInputChange = (e) => {
@@ -46,7 +46,7 @@ function CreateProduct() {
       await dispatch(createProduct(finalFormData)).unwrap();
 
       toast.success("Product successfully listed");
-      Navigate("/ProductManager");
+      navigate("/productManager");
     } catch (err) {
       toast.error(err.message || "Falled to finalize store listing");
     }

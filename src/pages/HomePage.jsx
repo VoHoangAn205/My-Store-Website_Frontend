@@ -21,7 +21,6 @@ function HomePage() {
   const isLoading = useSelector(
     (state) => state.PRODUCT.isLoading.newArrivalsList,
   );
-  console.log(homePageCategories);
 
   useEffect(() => {
     dispatch(getNewArrivalProducts({ limit: 4 }));

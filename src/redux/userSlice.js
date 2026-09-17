@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import userService from "../services/userService";
+import { setAccessToken } from "../services/interceptors";
 
 const initialState = {
   isLoading: {
@@ -113,14 +114,21 @@ export const userSlice = createSlice({
     silentTokenSave: (state, action) => {
       state.token = action.payload.accessToken;
     },
+    clearLocalAuthState: (state, action) => {
+      state.token = "";
+      state.userInfo = null;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
+        setAccessToken(action.payload.data.accessToken);
+        localStorage.setItem("isLoggedIn", true);
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
+        setAccessToken(action.payload.data.accessToken);
       })
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.userInfo = action.payload;
@@ -129,6 +137,8 @@ export const userSlice = createSlice({
       .addCase(logout.fulfilled, (state, action) => {
         state.token = "";
         state.userInfo = null;
+        localStorage.removeItem("isLoggedIn");
+        setAccessToken(null);
       })
       .addCase(requestOtpRegister.fulfilled, (state, action) => {
         state.otpRegister = action.payload;
@@ -165,5 +175,5 @@ export const userSlice = createSlice({
 
 const { actions, reducer } = userSlice;
 
-export const { silentTokenSave } = actions;
+export const { silentTokenSave, clearLocalAuthState } = actions;
 export default reducer;

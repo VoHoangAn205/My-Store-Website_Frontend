@@ -29,13 +29,15 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     try {
-      const res = await dispatch(updateCart({ product: id, quantity }));
+      const res = await dispatch(
+        updateCart({ product: id, quantity }),
+      ).unwrap();
 
       toast.success("Added to your cart");
     } catch (err) {
       const messages = Array.isArray(err.message)
         ? err.message
-        : [err.message || "Failed to create order"];
+        : [err.message || "Failed to add this product"];
 
       messages.forEach((msg) => toast.error(msg));
     }

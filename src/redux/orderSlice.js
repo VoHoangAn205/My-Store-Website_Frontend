@@ -52,7 +52,6 @@ export const createOrder = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await orderService.createOrder(data);
-      console.log(response.data);
 
       return response.data;
     } catch (err) {
@@ -67,7 +66,6 @@ export const getShopOrders = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await orderService.getOrdersForShop(data);
-      console.log(response.data);
 
       return response.data;
     } catch (err) {
@@ -88,7 +86,6 @@ export const orderSlice = createSlice({
         state.isLoading.getParent = false;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
-        state.parentOrder = action.payload.data;
         state.isLoading.createOrder = false;
       })
       .addCase(getShopOrders.fulfilled, (state, action) => {

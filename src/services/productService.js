@@ -1,5 +1,4 @@
-import API from "./API";
-import { privateApi } from "./axiosInstance";
+import API, { axiosPrivate } from "./API";
 
 const productService = {
   getAllProducts() {
@@ -12,12 +11,12 @@ const productService = {
     return API.call().get(`/product/${id}`);
   },
   getAllUserProducts(data) {
-    return privateApi.get(
+    return axiosPrivate.get(
       `/product/myOwnProducts?page=${data.currentPage}&limit=5`,
     );
   },
   createProduct(data) {
-    return privateApi.post("/product", data);
+    return axiosPrivate.post("/product", data);
   },
   searchProduct(data) {
     return API.call().get(

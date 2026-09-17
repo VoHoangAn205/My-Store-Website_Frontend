@@ -1,14 +1,14 @@
-import { privateApi } from "./axiosInstance";
+import { axiosPrivate } from "./API";
 
 const cartService = {
   getCarts() {
-    return privateApi.get("/cart");
+    return axiosPrivate.get("/cart");
   },
   updateCart(data) {
-    return privateApi.put(`/cart`, data);
+    return axiosPrivate.put(`/cart`, data);
   },
   deleteCart(id) {
-    return privateApi.delete(`/cart/${id}`);
+    return axiosPrivate.delete(`/cart/${id}`);
   },
 };
 export default cartService;

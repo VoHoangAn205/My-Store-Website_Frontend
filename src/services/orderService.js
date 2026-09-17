@@ -1,23 +1,22 @@
-import API from "./API";
-import { privateApi } from "./axiosInstance";
+import { axiosPrivate } from "./API";
 
 const orderService = {
   getAllUserOrders() {
-    return privateApi.get("/order/getAllParents");
+    return axiosPrivate.get("/order/getAllParents");
   },
   getOrdersForShop(data) {
-    return privateApi.get(
+    return axiosPrivate.get(
       `/order/getShopOrders?limit=${data.limit}&page=${data.page}&status=${data.status}`,
     );
   },
   createOrder(data) {
-    return privateApi.post("/order/", data);
+    return axiosPrivate.post("/order/", data);
   },
   shopUpdateOrderStatus(id) {
-    return privateApi.put(`/order/shopUpdateStatus/${id}`);
+    return axiosPrivate.put(`/order/shopUpdateStatus/${id}`);
   },
   shopCancelOrder(id) {
-    return privateApi.put(`/order/shopCancel/${id}`);
+    return axiosPrivate.put(`/order/shopCancel/${id}`);
   },
 };
 

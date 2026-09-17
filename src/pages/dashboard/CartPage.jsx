@@ -19,7 +19,6 @@ const CartPage = () => {
       const res = await dispatch(
         createOrder({ cartItems: selectedItem }),
       ).unwrap();
-      console.log("order ok");
 
       toast.success("Order Successfully");
       navigate("/myPurchases");

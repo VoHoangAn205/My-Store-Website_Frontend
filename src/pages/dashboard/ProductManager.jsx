@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { privateApi } from "../../services/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { getAllUserProducts } from "../../redux/productSlice";

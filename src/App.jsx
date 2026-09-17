@@ -14,7 +14,7 @@ import MyPurchases from "./pages/dashboard/MyPurchases";
 import OrderManager from "./pages/dashboard/OrderManager";
 import ProductManager from "./pages/dashboard/ProductManager";
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
