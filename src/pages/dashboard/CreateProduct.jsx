@@ -14,6 +14,7 @@ function CreateProduct() {
     (state) => state.CATEGORY.categoriesToUpload,
   );
   const listImage = useSelector((state) => state.GALLERY.imagesToUpload);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -33,6 +34,7 @@ function CreateProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const uploadedGallery = await dispatch(createGallery(listImage)).unwrap();
@@ -49,6 +51,8 @@ function CreateProduct() {
       navigate("/productManager");
     } catch (err) {
       toast.error(err.message || "Falled to finalize store listing");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,10 +79,17 @@ function CreateProduct() {
           </button> */}
           <button
             onSubmit={handleSubmit}
+            disabled={isLoading}
             form="product-form"
             type="submit"
-            className="grow sm:flex-none px-5 py-2.5 text-sm font-semibold bg-brand-rust text-white rounded-xl shadow-md hover:bg-brand-rust/90 transition-colors duration-150"
+            className="grow sm:flex-none px-5 py-2.5 text-sm font-semibold bg-brand-rust text-white rounded-xl shadow-md hover:bg-brand-rust/90 transition-colors duration-150 "
           >
+            {isLoading && (
+              <i
+                id="btnSpinner"
+                class="fa-solid fa-circle-notch fa-spin hidden"
+              ></i>
+            )}{" "}
             Publish Product
           </button>
         </div>

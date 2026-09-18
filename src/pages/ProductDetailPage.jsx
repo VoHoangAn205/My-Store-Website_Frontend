@@ -15,6 +15,8 @@ export default function ProductDetailPage() {
   const productData = useSelector((state) => state.PRODUCT.productDetail);
   const isLoading = useSelector((state) => state.PRODUCT.isLoading.detailPage);
   const [quantity, setQuantity] = useState(1);
+  const [addLoading, setAddLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(
     productData?.gallery?.images[0].url || "",
   );
@@ -28,6 +30,7 @@ export default function ProductDetailPage() {
   }, [dispatch]);
 
   const handleAddToCart = async () => {
+    setAddLoading(true);
     try {
       const res = await dispatch(
         updateCart({ product: id, quantity }),
@@ -40,10 +43,13 @@ export default function ProductDetailPage() {
         : [err.message || "Failed to add this product"];
 
       messages.forEach((msg) => toast.error(msg));
+    } finally {
+      setAddLoading(false);
     }
   };
 
   const handleCreateOrder = async () => {
+    setCheckoutLoading(true);
     try {
       const res = await dispatch(
         createOrder({ cartItems: [{ productId: id, quantity }] }),
@@ -57,6 +63,8 @@ export default function ProductDetailPage() {
         : [err.message || "Failed to create order"];
 
       messages.forEach((msg) => toast.error(msg));
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -230,17 +238,29 @@ export default function ProductDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   onClick={handleAddToCart}
-                  disabled={isOutOfStock}
+                  disabled={isOutOfStock || addLoading}
                   className="w-full bg-brand-rust hover:bg-brand-rust/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
                 >
+                  {addLoading && (
+                    <i
+                      id="btnSpinner"
+                      class="fa-solid fa-circle-notch fa-spin hidden"
+                    ></i>
+                  )}{" "}
                   Add to Cart
                 </button>
 
                 <button
                   onClick={handleCreateOrder}
-                  disabled={isOutOfStock}
+                  disabled={isOutOfStock || checkoutLoading}
                   className="w-full bg-brand-dark hover:bg-brand-dark/90 disabled:bg-brand-slate/30 text-white font-medium py-3 px-6 rounded-xl transition duration-200 shadow-sm disabled:cursor-not-allowed"
                 >
+                  {checkoutLoading && (
+                    <i
+                      id="btnSpinner"
+                      class="fa-solid fa-circle-notch fa-spin hidden"
+                    ></i>
+                  )}{" "}
                   Buy Now
                 </button>
               </div>

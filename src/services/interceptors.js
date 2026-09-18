@@ -67,7 +67,6 @@ axiosPrivate.interceptors.response.use(
         }
 
         setAccessToken(null);
-        // window.location.href = "/login";
         router.navigate("/login");
         return Promise.reject(refreshError);
       } finally {

@@ -12,9 +12,11 @@ const CartPage = () => {
   const navigate = useNavigate();
   const cartList = useSelector((state) => state.CART.cartList) || [];
   const isLoading = useSelector((state) => state.CART.isLoading.cartList);
+  const [checkoutStatus, setCheckoutStatus] = useState(false);
   const [selectedItem, setSelectedItem] = useState([]);
 
   const handleCreateOrder = async () => {
+    setCheckoutStatus(true);
     try {
       const res = await dispatch(
         createOrder({ cartItems: selectedItem }),
@@ -28,6 +30,8 @@ const CartPage = () => {
         : [err.message || "Failed to create order"];
 
       messages.forEach((msg) => toast.error(msg));
+    } finally {
+      setCheckoutStatus(false);
     }
   };
 
@@ -414,8 +418,16 @@ const CartPage = () => {
 
               <button
                 onClick={handleCreateOrder}
+                disabled={checkoutStatus}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2"
               >
+                {" "}
+                {checkoutStatus && (
+                  <i
+                    id="btnSpinner"
+                    class="fa-solid fa-circle-notch fa-spin hidden"
+                  ></i>
+                )}
                 Proceed to Checkout{" "}
                 <i className="fa-solid fa-arrow-right text-sm"></i>
               </button>
