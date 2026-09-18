@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUserOrder } from "../../redux/orderSlice";
-import SubOrderRow from "../../components/subOrderRow";
+import SubOrderRow from "../../components/SubOrderRow";
 import LoadingTableSkeleton from "../../components/LoadingTableSkeleton";
 
 function MyPurchases() {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.ORDER.parentOrder);
   const isLoading = useSelector((state) => state.ORDER.isLoading.getParent);
-  console.log(orders);
 
   useEffect(() => {
     dispatch(getAllUserOrder());

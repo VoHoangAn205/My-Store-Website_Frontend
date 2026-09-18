@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function LoadingCardSkeleton({ count = 8 }) {
   // Generate an array based on the count prop to render multiple skeleton cards
   const skeletons = Array.from({ length: count });

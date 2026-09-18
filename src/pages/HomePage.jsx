@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CategoryCard from "../components/CategoryCard";
+import { CategoryCardSkeleton } from "../components/CategoryCardSkeleton";
 import LoadingCardSkeleton from "../components/LoadingCardSkeleton";
-import ProductCard from "../components/ProductCard";
-import { getAllProducts, getNewArrivalProducts } from "../redux/productSlice";
 import NoProductFound from "../components/NoProductFound";
 import ProductCardv2 from "../components/ProductCardv2";
-import { Link } from "react-router";
-import { CategoryCardSkeleton } from "../components/CategoryCardSkeleton";
-import CategoryCard from "../components/CategoryCard";
+import { getNewArrivalProducts } from "../redux/productSlice";
 
 function HomePage() {
   const dispatch = useDispatch();

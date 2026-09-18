@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function TableSkeleton({ rows, cols }) {
   // Generate arrays based on props to render the matching placeholder grids
   const skeletonRows = Array(rows).fill(0);

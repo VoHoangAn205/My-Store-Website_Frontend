@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import HiddenSearchBar from "./hiddenSearchBar";
+import HiddenSearchBar from "./HiddenSearchBar";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../redux/uiSlice";

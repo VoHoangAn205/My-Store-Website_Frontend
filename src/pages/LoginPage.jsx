@@ -57,8 +57,8 @@ function LoginPage() {
             Welcome back to the collective.
           </h2>
           <p className="text-sm text-brand-slate leading-relaxed">
-            Log into your dashboard to monitor live order fulfillments, update
-            your product listings, and analyze daily revenue metrics.
+            Ready for today's marketplace experience? Log in to find what you
+            love or reach your customers.
           </p>
         </div>
 

@@ -62,7 +62,8 @@ export default function Footer(params) {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-brand-slate/60 gap-4">
           <p>
-            &copy; 2026 AURA Inc. Architectural Sound Labs. All rights reserved.
+            &copy; 2026 HOANGAN Inc. Architectural Sound Labs. All rights
+            reserved.
           </p>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-white transition-colors">

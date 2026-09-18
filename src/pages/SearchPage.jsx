@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams, useSearchParams } from "react-router";
-import { searchProduct } from "../redux/productSlice";
+import { useSearchParams } from "react-router";
 import LoadingCardSkeleton from "../components/LoadingCardSkeleton";
-import ProductCard from "../components/ProductCard"; //use this for render card
 import NoProductFound from "../components/NoProductFound";
+import ProductCard from "../components/ProductCard";
+import { searchProduct } from "../redux/productSlice";
 
 function SearchPage() {
   const dispatch = useDispatch();
