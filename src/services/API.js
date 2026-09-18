@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://hoangan-store-918.vercel.app/";
+const BASE_URL = "https://hoangan-store-918.vercel.app";
 
 export const axiosPublic = axios.create({
   baseURL: BASE_URL,
