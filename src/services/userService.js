@@ -16,6 +16,9 @@ const userService = {
   getUserInfo() {
     return axiosPrivate.get("/user");
   },
+  getUserInfoWithToken(token) {
+    return API.callWithToken(token).get("/user");
+  },
   requestOtpRegister(email) {
     return API.call().post(`/requestOtp`, email);
   },

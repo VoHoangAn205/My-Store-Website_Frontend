@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { getUserInfo, login } from "../redux/userSlice";
 import { useNavigate } from "react-router";
+import { getUserInfoWithToken, login } from "../redux/userSlice";
 
 function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errMessage, setErrMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,19 +23,20 @@ function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(login(formData)).then((res) => {
-      const { message } = res.payload;
+    setIsLoading(true);
+    try {
+      const res = await dispatch(login(formData)).unwrap();
 
-      if (!message) {
-        dispatch(getUserInfo());
-        setErrMessage("");
-        navigate("/");
-      } else {
-        setErrMessage(message);
-      }
-    });
+      dispatch(getUserInfoWithToken(res.data));
+      setErrMessage("");
+      navigate("/");
+    } catch (err) {
+      setErrMessage(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -221,8 +223,15 @@ function LoginPage() {
             {/* Submission Action Button */}
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full mt-4 bg-brand-dark text-white font-bold text-sm py-3 rounded-xl shadow-md hover:bg-brand-rust hover:shadow-lg transition-all duration-200 focus:outline-none cursor-pointer"
             >
+              {isLoading && (
+                <i
+                  id="btnSpinner"
+                  class="fa-solid fa-circle-notch fa-spin hidden"
+                ></i>
+              )}{" "}
               Sign In
             </button>
           </form>

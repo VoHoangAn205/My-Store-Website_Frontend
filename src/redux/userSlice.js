@@ -79,6 +79,20 @@ export const getUserInfo = createAsyncThunk(
   },
 );
 
+export const getUserInfoWithToken = createAsyncThunk(
+  "user/getUserInfo",
+  async (token, thunkAPI) => {
+    try {
+      const response = await userService.getUserInfoWithToken(token);
+
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const requestOtpRegister = createAsyncThunk(
   "product/requestOtpRegister",
   async (email, thunkAPI) => {
@@ -133,6 +147,9 @@ export const userSlice = createSlice({
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.userInfo = action.payload;
         state.isLoading.userInfo = false;
+      })
+      .addCase(getUserInfoWithToken.fulfilled, (state, action) => {
+        state.userInfo = action.payload;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.token = "";
