@@ -80,7 +80,7 @@ export const getUserInfo = createAsyncThunk(
 );
 
 export const getUserInfoWithToken = createAsyncThunk(
-  "user/getUserInfo",
+  "user/getUserInfoWithToken",
   async (token, thunkAPI) => {
     try {
       const response = await userService.getUserInfoWithToken(token);
@@ -186,6 +186,9 @@ export const userSlice = createSlice({
       .addCase(getUserInfo.rejected, (state, action) => {
         state.errMessage.userInfo = action.payload || action.error.message;
         state.isLoading.userInfo = false;
+      })
+      .addCase(getUserInfoWithToken.rejected, (state, action) => {
+        state.errMessage.userInfo = action.payload || action.error.message;
       });
   },
 });

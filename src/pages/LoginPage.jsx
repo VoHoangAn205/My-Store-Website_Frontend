@@ -29,7 +29,7 @@ function LoginPage() {
     try {
       const res = await dispatch(login(formData)).unwrap();
 
-      dispatch(getUserInfoWithToken(res.data));
+      dispatch(getUserInfoWithToken(res.data.accessToken));
       setErrMessage("");
       navigate("/");
     } catch (err) {
@@ -229,7 +229,7 @@ function LoginPage() {
               {isLoading && (
                 <i
                   id="btnSpinner"
-                  class="fa-solid fa-circle-notch fa-spin hidden"
+                  className="fa-solid fa-circle-notch fa-spin hidden"
                 ></i>
               )}{" "}
               Sign In

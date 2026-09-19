@@ -8,7 +8,7 @@ import LoadingPageSkeleton from "../components/LoadingPageSkeleton";
 import SideBar from "../components/SideBar";
 import {
   clearLocalAuthState,
-  getUserInfo,
+  getUserInfoWithToken,
   refreshToken,
 } from "../redux/userSlice";
 
@@ -27,7 +27,7 @@ export default function RootLayout() {
     const firstRefresh = async () => {
       try {
         const res = await dispatch(refreshToken()).unwrap();
-        dispatch(getUserInfo(res.data.accessToken));
+        dispatch(getUserInfoWithToken(res.data.accessToken));
       } catch (err) {
         localStorage.removeItem("isLoggedIn");
         dispatch(clearLocalAuthState());
