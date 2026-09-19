@@ -150,6 +150,7 @@ export const userSlice = createSlice({
       })
       .addCase(getUserInfoWithToken.fulfilled, (state, action) => {
         state.userInfo = action.payload;
+        state.isLoading.userInfo = false;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.token = "";
@@ -174,6 +175,9 @@ export const userSlice = createSlice({
       .addCase(getUserInfo.pending, (state) => {
         state.isLoading.userInfo = true;
       })
+      .addCase(getUserInfoWithToken.pending, (state) => {
+        state.isLoading.userInfo = true;
+      })
 
       .addCase(requestOtpRegister.rejected, (state, action) => {
         state.errMessage.otpRegister = action.payload || action.error.message;
@@ -189,6 +193,7 @@ export const userSlice = createSlice({
       })
       .addCase(getUserInfoWithToken.rejected, (state, action) => {
         state.errMessage.userInfo = action.payload || action.error.message;
+        state.isLoading.userInfo = false;
       });
   },
 });

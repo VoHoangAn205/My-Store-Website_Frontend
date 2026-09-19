@@ -12,7 +12,6 @@ const AccountPage = () => {
   const [upgradeStatus, setUpgradeStatus] = useState(
     userData?.isPendingVendor || false,
   );
-  console.log(upgradeStatus);
 
   const handleSubmitUpgrade = async () => {
     setRequestLoading(true);
