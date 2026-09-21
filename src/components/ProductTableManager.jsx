@@ -1,6 +1,31 @@
+import { useDispatch } from "react-redux";
 import renderStatusColor from "../helpers/renderStatusColor";
+import { toast } from "sonner";
+import { useState } from "react";
+import { deleteProduct } from "../redux/productSlice";
 
 const ProductTableManager = ({ products, layout }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleDeleteProduct = async (id) => {
+    const toastId = toast.loading("Deleting product...");
+    setIsDeleting(true);
+    try {
+      const res = await dispatch(deleteProduct(id)).unwrap();
+
+      toast.success("Product deleted successful");
+    } catch (err) {
+      const messages = Array.isArray(err.message)
+        ? err.message
+        : [err.message || "Failed to delete this product"];
+      console.error(messages);
+      message.forEach((msg) => toast.error(msg));
+    } finally {
+      toast.dismiss(toastId);
+      setIsDeleting(false);
+    }
+  };
   return (
     <>
       {/* ==================== 1. TABLE LAYOUT (MD DESKTOP & IPAD) ==================== */}
@@ -59,7 +84,11 @@ const ProductTableManager = ({ products, layout }) => {
                     <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                       <i className="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                    <button
+                      disabled={isDeleting}
+                      onClick={() => handleDeleteProduct(product._id)}
+                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                    >
                       <i className="fa-solid fa-trash-can"></i>
                     </button>
                   </div>

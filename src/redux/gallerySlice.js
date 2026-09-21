@@ -11,10 +11,9 @@ export const createGallery = createAsyncThunk(
       const imageFile = imgFileFormatter(data);
 
       const response = await galleryService.uploadGallery(imageFile);
-      console.log(response.data);
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },

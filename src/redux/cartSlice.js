@@ -15,7 +15,7 @@ export const updateCart = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -29,7 +29,7 @@ export const getCartList = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -43,7 +43,7 @@ export const deleteCart = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },

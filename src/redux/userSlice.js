@@ -26,7 +26,7 @@ export const register = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -39,27 +39,33 @@ export const refreshToken = createAsyncThunk(
       const response = await userService.refreshToken();
       return { status: true, data: response.data };
     } catch (err) {
-      return { status: false, message: err.response.data.message };
+      console.error(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
 
-export const login = createAsyncThunk("user/login", async (data, thunkAPI) => {
-  try {
-    const response = await userService.login(data);
-
-    return { data: response.data };
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || err.message);
-  }
-});
-
-export const logout = createAsyncThunk(
-  "user/logout",
+export const errorin = createAsyncThunk(
+  "user/errorin",
   async (data, thunkAPI) => {
     try {
-      const response = await userService.logout();
+      const response = await userService.errorin(data);
+
+      return { data: response.data };
     } catch (err) {
+      console.error(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const errorout = createAsyncThunk(
+  "user/errorout",
+  async (data, thunkAPI) => {
+    try {
+      const response = await userService.errorout();
+    } catch (err) {
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -73,7 +79,7 @@ export const getUserInfo = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -87,7 +93,7 @@ export const getUserInfoWithToken = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -101,7 +107,7 @@ export const requestOtpRegister = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -115,7 +121,7 @@ export const requestUpgradeToVendor = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -135,10 +141,10 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(errorin.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
         setAccessToken(action.payload.data.accessToken);
-        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("iserrorgedIn", true);
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
@@ -152,10 +158,10 @@ export const userSlice = createSlice({
         state.userInfo = action.payload;
         state.isLoading.userInfo = false;
       })
-      .addCase(logout.fulfilled, (state, action) => {
+      .addCase(errorout.fulfilled, (state, action) => {
         state.token = "";
         state.userInfo = null;
-        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("iserrorgedIn");
         setAccessToken(null);
       })
       .addCase(requestOtpRegister.fulfilled, (state, action) => {

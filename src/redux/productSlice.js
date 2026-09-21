@@ -35,7 +35,7 @@ export const getProductDetail = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -49,7 +49,7 @@ export const getNewArrivalProducts = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -63,7 +63,7 @@ export const getAllProducts = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -77,7 +77,7 @@ export const getAllUserProducts = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -91,7 +91,7 @@ export const getProductByCategory = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -105,7 +105,7 @@ export const searchProduct = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -116,10 +116,22 @@ export const createProduct = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await productService.createProduct(data);
-
-      console.log(response);
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+export const deleteProduct = createAsyncThunk(
+  "product/deleteProduct",
+  async (id, thunkAPI) => {
+    try {
+      const response = await productService.deleteProduct(id);
+
+      return response.data;
+    } catch (err) {
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -154,6 +166,11 @@ export const productSlice = createSlice({
       .addCase(getNewArrivalProducts.fulfilled, (state, action) => {
         state.newArrivalsList = action.payload;
         state.isLoading.newArrivalsList = false;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.userProducts = state.userProducts.filter(
+          (product) => product._id !== action.payload._id,
+        );
       })
 
       .addCase(getAllProducts.pending, (state) => {

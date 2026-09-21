@@ -15,7 +15,7 @@ export const shopCancelOrder = createAsyncThunk(
       const response = await orderService.shopCancelOrder(id);
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -27,7 +27,7 @@ export const shopUpdateOrderStatus = createAsyncThunk(
       const response = await orderService.shopUpdateOrderStatus(id);
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -41,7 +41,7 @@ export const getAllUserOrder = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -55,7 +55,7 @@ export const createOrder = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
@@ -69,7 +69,7 @@ export const getShopOrders = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },

@@ -18,7 +18,7 @@ export const getAllCategories = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },

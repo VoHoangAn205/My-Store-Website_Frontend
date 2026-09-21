@@ -18,6 +18,9 @@ const productService = {
   createProduct(data) {
     return axiosPrivate.post("/product", data);
   },
+  deleteProduct(id) {
+    return axiosPrivate.delete(`/product/${id}`);
+  },
   searchProduct(data) {
     return API.call().get(
       `/product/search?query=${data.query}&limit=${data.limit}&page=${data.page}`,
