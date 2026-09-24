@@ -22,7 +22,7 @@ A responsive Single Page Application (SPA) designed to interface with a secure, 
 - **State Management:** Redux Toolkit
 - **Routing:** React Router v6
 - **HTTP Client:** Axios (Private & Public Instances with Interceptors)
-- **Styling:** Tailwind CSS / Ant Design
+- **Styling:** Tailwind CSS
 - **Hosting:** Vercel
 
 ---
@@ -30,5 +30,5 @@ A responsive Single Page Application (SPA) designed to interface with a secure, 
 ## ⚙️ Environment Variables
 
 ```env
-VITE_API_BASE_URL=[https://hoangan-online-store.onrender.com](https://hoangan-online-store.onrender.com)
+VITE_API_BASE_URL=https://hoangan-online-store.onrender.com
 ```

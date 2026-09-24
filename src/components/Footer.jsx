@@ -7,9 +7,9 @@ export default function Footer(params) {
             <span className="text-lg font-black tracking-widest text-white">
               HOANGAN<span className="text-brand-rust">.</span>
             </span>
-            <p className="mt-4 text-sm text-brand-slate/80 leading-relaxed max-w-sm">
-              Crafting premium modular audio assets designed for functional
-              minimalism, aesthetic harmony, and acoustic precision.
+            <p className="mt-4 text-sm text-brand-white leading-relaxed max-w-sm">
+              Products in this website are used for showcase and demonstrate
+              website features. There are no actual transactions were executed.
             </p>
           </div>
 
@@ -19,41 +19,23 @@ export default function Footer(params) {
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Our Manifesto
+                <a
+                  target="_blank"
+                  href="https://github.com/VoHoangAn205"
+                  className="hover:text-white transition-colors flex items-center"
+                >
+                  <i className="fa-brands fa-github text-2xl"></i>{" "}
+                  <span>GitHub Profile</span>
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Sustainability Commitments
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Retail Locations
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-bold text-brand-sand uppercase tracking-widest mb-4">
-              Support
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Shipping & Global Logistics
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Warranty & Return Policies
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Direct Technical Help
+                <a
+                  target="_blank"
+                  href="https://www.upwork.com/freelancers/~014df6dde93bc975cd?mp_source=share"
+                  className="hover:text-white transition-colors flex items-center"
+                >
+                  <i className="fa-brands fa-square-upwork text-2xl"></i>{" "}
+                  <span>Hire on Upwork</span>
                 </a>
               </li>
             </ul>

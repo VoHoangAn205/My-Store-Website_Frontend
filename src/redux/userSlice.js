@@ -45,25 +45,22 @@ export const refreshToken = createAsyncThunk(
   },
 );
 
-export const errorin = createAsyncThunk(
-  "user/errorin",
+export const login = createAsyncThunk("user/login", async (data, thunkAPI) => {
+  try {
+    const response = await userService.login(data);
+
+    return { data: response.data };
+  } catch (err) {
+    console.error(err.message);
+    return thunkAPI.rejectWithValue(err.response?.data || err.message);
+  }
+});
+
+export const logout = createAsyncThunk(
+  "user/logout",
   async (data, thunkAPI) => {
     try {
-      const response = await userService.errorin(data);
-
-      return { data: response.data };
-    } catch (err) {
-      console.error(err.message);
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
-    }
-  },
-);
-
-export const errorout = createAsyncThunk(
-  "user/errorout",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userService.errorout();
+      const response = await userService.logout();
     } catch (err) {
       console.error(err.message);
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -141,10 +138,10 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(errorin.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
         setAccessToken(action.payload.data.accessToken);
-        localStorage.setItem("iserrorgedIn", true);
+        localStorage.setItem("isLoggedIn", true);
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.token = action.payload.data.accessToken;
@@ -158,10 +155,10 @@ export const userSlice = createSlice({
         state.userInfo = action.payload;
         state.isLoading.userInfo = false;
       })
-      .addCase(errorout.fulfilled, (state, action) => {
+      .addCase(logout.fulfilled, (state, action) => {
         state.token = "";
         state.userInfo = null;
-        localStorage.removeItem("iserrorgedIn");
+        localStorage.removeItem("isLoggedIn");
         setAccessToken(null);
       })
       .addCase(requestOtpRegister.fulfilled, (state, action) => {
