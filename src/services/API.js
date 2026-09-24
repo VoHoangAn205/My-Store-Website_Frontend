@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://hoangan-online-store.onrender.com";
+const BASE_URL = process.env.BASE_URL_API;
 
 export const axiosPublic = axios.create({
   baseURL: BASE_URL,

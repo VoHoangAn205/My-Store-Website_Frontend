@@ -1,16 +1,34 @@
-# React + Vite
+# Full-Stack E-Commerce Client (React, Redux Toolkit, Tailwind)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive Single Page Application (SPA) designed to interface with a secure, dual-token Express REST API. Built with resilient session persistence and centralized state management.
 
-Currently, two official plugins are available:
+> **Backend Repository:** [Link to Backend Repo](https://github.com/VoHoangAn205/My-Online-Store-API)  
+> **Live Website:** [https://myWebsite.vercel.app](https://hoangan-online-store-918.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Technical Highlights
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Silent Token Refresh Queueing:** Implemented a custom Axios interceptor utilizing a request queue (`processQueue`) to handle expired access tokens seamlessly without interrupting user actions or dropping concurrent API requests.
+- **In-Memory Token Storage (XSS Defense):** Access tokens are stored strictly in Redux memory state, while HTTP-Only cookies handle refresh sessions.
+- **SPA Client-Side Routing:** Configured Vercel rewrite rules to ensure seamless deep-linking and browser refreshes across protected routes (`/account`, `/category`).
+- **Optimized Image Uploads:** Communicates directly with backend Multer streams for centralized image processing and validation.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠 Tech Stack
+
+- **Framework:** React.js (Vite / CRA)
+- **State Management:** Redux Toolkit
+- **Routing:** React Router v6
+- **HTTP Client:** Axios (Private & Public Instances with Interceptors)
+- **Styling:** Tailwind CSS / Ant Design
+- **Hosting:** Vercel
+
+---
+
+## ⚙️ Environment Variables
+
+```env
+VITE_API_BASE_URL=[https://hoangan-online-store.onrender.com](https://hoangan-online-store.onrender.com)
+```
